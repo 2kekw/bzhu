@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Дневник БЖУ</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#eef0f2" media="(prefers-color-scheme: light)">
@@ -45,7 +45,8 @@
 
 *{box-sizing:border-box}
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html,body{margin:0}
+html,body{margin:0;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+input,select,textarea{font-size:16px!important}
 [hidden]{display:none!important}
 button{-webkit-tap-highlight-color:transparent}
 .daynav{display:flex;align-items:center;gap:8px;margin-top:4px}
