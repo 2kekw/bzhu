@@ -45,7 +45,8 @@
 
 *{box-sizing:border-box}
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html,body{margin:0;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{margin:0;width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.wrap{overflow-x:clip}
 input,select,textarea{font-size:16px!important}
 [hidden]{display:none!important}
 button{-webkit-tap-highlight-color:transparent}
@@ -948,6 +949,9 @@ async function lookup(code){
   det.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
+// iOS Safari ignores user-scalable=no for pinch: block zoom gestures explicitly
+["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+document.addEventListener("touchmove",e=>{ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false});
 fillProducts(); render();
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
 </script>
