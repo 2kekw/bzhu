@@ -50,11 +50,14 @@ html,body{margin:0;width:100%;max-width:100%;overflow-x:hidden;overscroll-behavi
 input,select,textarea{font-size:16px!important}
 [hidden]{display:none!important}
 button{-webkit-tap-highlight-color:transparent}
-.daynav{display:flex;align-items:center;gap:8px;margin-top:4px}
+.daynav{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:8px;margin-top:10px}
 .daynav button{background:var(--surface);border:1px solid var(--line);border-radius:8px;width:36px;height:32px;font-size:1.1rem;cursor:pointer;color:var(--fg)}
 .daynav button:disabled{opacity:.35;cursor:default}
-.daynav{flex-wrap:wrap}
-.datepick{position:relative;display:inline-flex;align-items:center;gap:8px;padding:5px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font-size:.92rem;cursor:pointer;min-width:0;max-width:100%}
+.daynav .datepick{justify-self:center}
+.navarrow{width:40px!important;height:36px!important}
+.todayrow{display:flex;justify-content:center;min-height:0}
+.todayrow .linkbtn{margin-top:6px}
+.datepick{position:relative;display:inline-flex;align-items:center;gap:8px;padding:7px 12px;white-space:nowrap;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font-size:.92rem;cursor:pointer;min-width:0;max-width:100%}
 .datepick span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .datepick svg{flex:none;color:var(--muted)}
 .datepick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;font-size:16px}
@@ -173,6 +176,30 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .otherday{display:flex;gap:8px;align-items:end}
 .otherday .field{flex:1}
 
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:-1px}
+/* collapsible panels */
+.coll{gap:0}
+.coll-head{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;padding:0;color:var(--fg);cursor:pointer;text-align:left;font:inherit}
+.coll-head h2{flex:1;min-width:0}
+.coll-sum{color:var(--muted);font-size:.85rem;white-space:nowrap}
+.chev{flex:none;color:var(--muted);transition:transform .2s ease}
+.coll-head[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.coll-body{display:flex;flex-direction:column;gap:14px;padding-top:14px}
+.coll-body>.btn{align-self:flex-start}
+
+/* success check */
+.done{position:fixed;left:50%;top:42%;z-index:80;width:112px;height:112px;margin:-56px 0 0 -56px;border-radius:26px;background:color-mix(in srgb,var(--surface) 82%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 10px 40px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;pointer-events:none;opacity:0}
+.done svg{width:54px;height:54px}
+.done .dc{fill:none;stroke:var(--carb);stroke-width:3;stroke-dasharray:151;stroke-dashoffset:151}
+.done .dk{fill:none;stroke:var(--carb);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:36;stroke-dashoffset:36}
+.done span{font-size:.8rem;font-weight:600;color:var(--fg)}
+.done.go{animation:donebox .95s ease forwards}
+.done.go .dc{animation:dash .35s ease-out forwards}
+.done.go .dk{animation:dash .22s ease-out .3s forwards}
+@keyframes dash{to{stroke-dashoffset:0}}
+@keyframes donebox{0%{opacity:0;transform:scale(.88)}14%{opacity:1;transform:scale(1)}78%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.96)}}
+@media (prefers-reduced-motion:reduce){.done.go{animation:donebox .9s linear forwards}.done.go .dc,.done.go .dk{animation:none;stroke-dashoffset:0}}
+
 /* eaten list */
 .list{display:flex;flex-direction:column}
 .item{display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:6px;row-gap:8px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
@@ -209,7 +236,8 @@ details[open] summary{margin-bottom:12px}
 <div class="wrap">
   <header>
     <h1>Дневник БЖУ</h1>
-    <div class="daynav"><button type="button" id="prevDay" aria-label="Предыдущий день">‹</button><label class="datepick"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span id="today"></span><input type="date" id="dateIn" aria-label="Выбрать дату"></label><button type="button" id="nextDay" aria-label="Следующий день">›</button><button type="button" class="todaybtn" id="goToday" hidden>Сегодня</button></div>
+    <div class="daynav"><button type="button" class="navarrow" id="prevDay" aria-label="Предыдущий день">‹</button><label class="datepick"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span id="today"></span><input type="date" id="dateIn" aria-label="Выбрать дату"></label><button type="button" class="navarrow" id="nextDay" aria-label="Следующий день">›</button></div>
+    <div class="todayrow"><button type="button" class="linkbtn" id="goToday" hidden>Вернуться к сегодня</button></div>
   </header>
 
   <!-- totals -->
@@ -296,15 +324,6 @@ details[open] summary{margin-bottom:12px}
     </details>
   </section>
 
-  <!-- my products -->
-  <section class="panel" aria-labelledby="my-h">
-    <div class="head-row">
-      <h2 id="my-h">Мои продукты</h2>
-      <button class="btn ghost" type="button" id="myAdd">Добавить свой</button>
-    </div>
-    <div class="mylist" id="myList"></div>
-  </section>
-
   <!-- eaten -->
   <section class="panel" aria-labelledby="e-h">
     <div class="head-row">
@@ -314,12 +333,20 @@ details[open] summary{margin-bottom:12px}
     <div class="list" id="list"></div>
   </section>
 
-  <!-- norm -->
-  <section class="panel" aria-labelledby="n-h">
-    <div>
-      <h2 id="n-h">Моя норма</h2>
-      <p class="hint">Формула Миффлина — Сан Жеора. Белок 2 г на кг веса, жиры 1 г на кг, остальное углеводы.</p>
+  <!-- my products -->
+  <section class="panel coll" id="myPanel">
+    <button class="coll-head" type="button" aria-expanded="false" aria-controls="myBody"><svg class="chev" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M4 2.5 8.5 6 4 9.5Z" fill="currentColor"/></svg><h2 id="my-h">Мои продукты</h2><span class="coll-sum num" id="mySum"></span></button>
+    <div class="coll-body" id="myBody" hidden>
+      <button class="btn ghost" type="button" id="myAdd">Добавить свой продукт</button>
+      <div class="mylist" id="myList"></div>
     </div>
+  </section>
+
+  <!-- norm -->
+  <section class="panel coll" id="normPanel">
+    <button class="coll-head" type="button" aria-expanded="false" aria-controls="normBody"><svg class="chev" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M4 2.5 8.5 6 4 9.5Z" fill="currentColor"/></svg><h2 id="n-h">Мои данные и цель</h2><span class="coll-sum num" id="normSum"></span></button>
+    <div class="coll-body" id="normBody" hidden>
+    <p class="hint">Формула Миффлина — Сан Жеора. Белок 2 г на кг веса, жиры 1 г на кг, остальное углеводы.</p>
     <div class="norm-out num" id="normOut"></div>
     <p class="hint" id="normHint"></p>
     <div class="grid2">
@@ -351,6 +378,7 @@ details[open] summary{margin-bottom:12px}
           <option value="cut">Сушка (дефицит 10%)</option>
           <option value="lose">Похудение (дефицит 20%)</option>
         </select></div>
+    </div>
     </div>
   </section>
 
@@ -384,6 +412,8 @@ details[open] summary{margin-bottom:12px}
     <p class="hint" id="backupMsg" role="status"></p>
   </section>
 
+  <div class="done" id="done" aria-hidden="true"><svg viewBox="0 0 52 52"><circle class="dc" cx="26" cy="26" r="24"/><path class="dk" d="M15.5 27l7 7 14-15"/></svg><span id="doneTxt">Добавлено</span></div>
+  <p class="sr" id="doneSr" role="status"></p>
   <div class="modal" id="modal" hidden>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="mTitle">
       <h3 id="mTitle"></h3>
@@ -567,7 +597,7 @@ const BASE = [
   {cat:10,id:"candy", n:"Конфета шоколадная", k:530,p:4,f:30,c:60, u:{n:"шт",g:12}},
   {cat:10,id:"beer", n:"Пиво светлое (0,5 л)", k:43,p:0.5,f:0,c:3.6, u:{n:"бут.",g:500}},
 ];
-const QUICK = [["whey",1],["hpmilk",1],["egg",2],["banana",1],["prost2",1],["teos",1],["chickenc",150]];
+const QUICK = [["whey",1],["hpmilk",1],["egg",2],["prost2",1]];
 
 const S = {
   get(k,d){try{const v=localStorage.getItem("bzhu_"+k);return v?JSON.parse(v):d}catch(e){return d}},
@@ -626,6 +656,8 @@ function renderNorm(){
      <div><span class="label">Белки</span><b>${n.p} г</b></div>
      <div><span class="label">Жиры</span><b>${n.f} г</b></div>
      <div><span class="label">Углеводы</span><b>${n.c} г</b></div>`;
+  const gl={recomp:"рекомпозиция",gain:"набор",cut:"сушка",lose:"похудение"}[settings.goal]||"";
+  document.getElementById("normSum").textContent=`${n.k} ккал · ${gl}`;
   const diff=n.k-n.tdee, wk=Math.abs(diff)*7/7700;
   const fmt=x=>x.toLocaleString("ru-RU",{maximumFractionDigits:1});
   document.getElementById("normHint").textContent =
@@ -671,7 +703,8 @@ function render(){
   saveDays();
   const [y,m,d]=cur.split("-").map(Number); const dt=new Date(y,m-1,d);
   const lbl=dt.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
-  document.getElementById("today").textContent = cur===todayKey ? "Сегодня, "+lbl : cur===shiftDay(todayKey,-1) ? "Вчера, "+lbl : lbl.charAt(0).toUpperCase()+lbl.slice(1);
+  const dm=dt.toLocaleDateString("ru-RU",{day:"numeric",month:"long"}), wd=dt.toLocaleDateString("ru-RU",{weekday:"short"});
+  document.getElementById("today").textContent = cur===todayKey ? "Сегодня, "+dm : cur===shiftDay(todayKey,-1) ? "Вчера, "+dm : wd.charAt(0).toUpperCase()+wd.slice(1).replace(".","")+", "+dm;
   document.getElementById("nextDay").disabled = cur>=todayKey;
   const di=document.getElementById("dateIn"); di.max=todayKey; di.value=cur;
   document.getElementById("goToday").hidden = cur===todayKey;
@@ -717,9 +750,15 @@ function preview(){
   pt.hidden=!adv; if(adv) pt.innerHTML=WARN_SVG+`<span>${esc(adv)}</span>`;
   document.getElementById("preview").textContent = amt>0 ? `${r(x.k)} ккал · Б ${r1(x.p)} · Ж ${r1(x.f)} · У ${r1(x.c)}${x.unit!=="г"&&x.g?" · ≈"+r(x.g)+" г":""}` : "";
 }
+let doneTimer=null;
+function done(txt){
+  const d=document.getElementById("done"); document.getElementById("doneTxt").textContent=txt; document.getElementById("doneSr").textContent=txt;
+  d.classList.remove("go"); void d.offsetWidth; d.classList.add("go");
+  clearTimeout(doneTimer); doneTimer=setTimeout(()=>d.classList.remove("go"),1000);
+}
 function add(id,amt,mode){
   diary.items.push(mk(id,amt,mode)); render();
-}
+ done("Добавлено");}
 
 const nz=s=>String(s).toLowerCase().replace(/ё/g,"е");
 const qEl=document.getElementById("q"), resEl=document.getElementById("results");
@@ -790,7 +829,7 @@ document.getElementById("clearBtn").addEventListener("click",()=>{
 });
 function copyFrom(src){
   const items=(days[src]&&days[src].items)||[]; if(!items.length) return;
-  const doCopy=replace=>{ const copy=JSON.parse(JSON.stringify(items)); diary.items = replace ? copy : diary.items.concat(copy); editIx=-1; render(); };
+  const doCopy=replace=>{ const copy=JSON.parse(JSON.stringify(items)); diary.items = replace ? copy : diary.items.concat(copy); editIx=-1; render(); done("Перенесено"); };
   if(!diary.items.length){ doCopy(true); return; }
   openModal("На этот день уже есть записи",
     `<p>За ${esc(dayName(cur))} уже ${diary.items.length} ${plural(diary.items.length,"запись","записи","записей")}. Добавить записи за ${esc(dayName(src))} к ним или заменить?</p>`,
@@ -826,7 +865,7 @@ document.getElementById("customForm").addEventListener("submit",e=>{
   const eid=e.target.dataset.editId;
   if(eid){ const ix=custom.findIndex(x=>x.id===eid); p.id=eid; if(ix>=0) custom[ix]=p; else custom.push(p); }
   else custom.push(p);
-  S.set("custom",custom); setCustomEditMode(null); fillProducts(p.id); renderMyList(); render();
+  S.set("custom",custom); setCustomEditMode(null); fillProducts(p.id); renderMyList(); render(); done(eid?"Изменено":"Добавлено");
   if(!eid) e.target.closest("details").open=false;
 });
 for(const id of ["sex","age","h","w","act","goal"]){
@@ -939,7 +978,7 @@ function saveEdit(){
   let ni;
   if(pr) ni=mk(pr.id,amt,mode);
   else { const base = i.unit==="г" ? i.g : i.amt; const kf=base? amt/base : 1; ni=Object.assign({},i,{amt, g:i.g!=null?i.g*kf:null, k:i.k*kf,p:i.p*kf,f:i.f*kf,c:i.c*kf}); }
-  diary.items[editIx]=ni; editIx=-1; render();
+  diary.items[editIx]=ni; editIx=-1; render(); done("Изменено");
 }
 document.getElementById("list").addEventListener("change",e=>{
   if(e.target.id!=="ieUnit") return;
@@ -952,6 +991,7 @@ let delId=null;
 function renderMyList(){
   const box=document.getElementById("myList");
   const ov=BASE.filter(p=>uover[p.id]);
+  document.getElementById("mySum").textContent = (custom.length+ov.length) ? String(custom.length+ov.length) : "";
   if(!custom.length && !ov.length){ box.innerHTML=`<p class="empty">Здесь будут продукты, которые ты добавил сам или через сканер, и порции, вес которых ты поменял.</p>`; return; }
   let h="";
   if(custom.length){
@@ -1008,9 +1048,21 @@ function editPortion(id){
      <div class="field"><label for="pUg">Вес, г</label><input id="pUg" type="number" inputmode="decimal" min="0" step="any" value="${pr.u?pr.u.g:""}"></div></div>
      <p class="hint" id="pMsg"></p>`, acts);
 }
-function savePortion(id){ S.set("uover",uover); applyOverrides(); fillProducts(id); renderMyList(); render(); }
+function savePortion(id){ S.set("uover",uover); applyOverrides(); fillProducts(id); renderMyList(); render(); done("Сохранено"); }
 document.getElementById("unitEdit").addEventListener("click",()=>editPortion(document.getElementById("prod").value));
 document.getElementById("myAdd").addEventListener("click",()=>{ setCustomEditMode(null); const f=document.getElementById("customForm"); f.closest("details").open=true; f.scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("cName").focus(); });
+// ---------- сворачиваемые разделы
+function setColl(panel,open){
+  const h=panel.querySelector(".coll-head"), body=panel.querySelector(".coll-body");
+  h.setAttribute("aria-expanded",String(open)); body.hidden=!open;
+  try{ const st=JSON.parse(localStorage.getItem("bzhu_coll")||"{}"); st[panel.id]=open; localStorage.setItem("bzhu_coll",JSON.stringify(st)); }catch(e){}
+}
+document.querySelectorAll(".coll").forEach(pn=>{
+  let open=false; try{ open=!!JSON.parse(localStorage.getItem("bzhu_coll")||"{}")[pn.id]; }catch(e){}
+  setColl(pn,open);
+  pn.querySelector(".coll-head").addEventListener("click",()=>setColl(pn, pn.querySelector(".coll-body").hidden));
+});
+function openColl(id){ const pn=document.getElementById(id); if(pn && pn.querySelector(".coll-body").hidden) setColl(pn,true); }
 document.getElementById("dateIn").addEventListener("change",e=>{ if(e.target.value) goDate(e.target.value); });
 document.getElementById("goToday").addEventListener("click",()=>goDate(todayKey));
 document.getElementById("prevDay").addEventListener("click",()=>goDay(-1));
