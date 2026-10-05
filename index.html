@@ -5,46 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Дневник БЖУ</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#eef0f2" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#13171b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0c1017">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="БЖУ">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&display=swap">
 <style>
 /* Layout: one narrow column, like a training log — today's totals on top, add food, eaten list, then the norm settings.
    Macro colors borrow from bumper plates: protein = blue, fat = yellow, carbs = green. */
 :root{
-  --bg:#eef0f2;
-  --surface:#ffffff;
-  --line:#d6dbe0;
-  --fg:#1b2026;
-  --muted:#5f6a75;
-  --accent:#c8323b;      /* red 25 kg plate */
-  --prot:#2462c9;        /* blue plate */
-  --fat:#c99a06;         /* yellow plate */
-  --carb:#1f8a52;        /* green plate */
-  --warn:#c8323b;
-  --track:#e3e7eb;
-  --chip:#f3f5f7;
+  /* dark-first, single look that matches the app icon: night navy, macro colors from the icon bars */
+  --bg:#0c1017;
+  --surface:#151b25;
+  --surface2:#1b2230;
+  --line:rgba(255,255,255,.07);
+  --fg:#eef1f6;
+  --muted:#8c96a8;
+  --accent:#6e96ff;
+  --prot:#6e96ff;
+  --fat:#f2bf5a;
+  --carb:#5fd39b;
+  --warn:#ff7a72;
+  --track:rgba(255,255,255,.07);
+  --chip:#1d2432;
+  --field:#0f141d;
   --font-display:"Unbounded","Arial Black",system-ui,sans-serif;
   --font-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#13171b;--surface:#1c2228;--line:#2e363e;--fg:#e8ecef;--muted:#97a2ad;
-  --accent:#ef5a62;--prot:#5b93f0;--fat:#e8bd35;--carb:#45b97a;--warn:#ef5a62;--track:#2a3138;--chip:#232a31;
-  color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#13171b;--surface:#1c2228;--line:#2e363e;--fg:#e8ecef;--muted:#97a2ad;
-  --accent:#ef5a62;--prot:#5b93f0;--fat:#e8bd35;--carb:#45b97a;--warn:#ef5a62;--track:#2a3138;--chip:#232a31;
-  color-scheme:dark}
 
 *{box-sizing:border-box}
-:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html,body{margin:0;width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .wrap{overflow-x:clip}
 input,select,textarea{font-size:16px!important}
@@ -223,12 +218,118 @@ details[open] summary{margin-bottom:12px}
 .foot{font-size:.8rem;color:var(--muted);margin:0}
 
 @media (max-width:520px){
-  .macros{grid-template-columns:1fr}
   .norm-out{grid-template-columns:repeat(2,minmax(0,1fr))}
   .add-row{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}
   .add-row .btn{grid-column:1 / -1}
 }
 @media (prefers-reduced-motion:reduce){.bar>i{transition:none}}
+
+/* ================= redesign ================= */
+html{background:var(--bg)}
+body{background:var(--bg);font-size:15px;letter-spacing:.005em}
+.wrap{position:relative;z-index:1}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(120% 55% at 0% 0%,rgba(110,150,255,.14),transparent 62%),radial-gradient(90% 45% at 100% 100%,rgba(95,211,155,.07),transparent 60%),var(--bg)}
+.wrap{gap:16px;padding-block:18px 56px}
+header{display:flex;flex-direction:column;gap:2px}
+h1{font-size:1.35rem;letter-spacing:-.005em}
+h2{font-family:var(--font-body);font-weight:600;font-size:1.02rem;letter-spacing:.005em}
+.panel{background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,0) 40%),var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;gap:14px;box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.18)}
+.label{font-size:.7rem;letter-spacing:.09em}
+.hint{color:var(--muted)}
+
+/* date bar */
+.daynav{margin-top:12px}
+.daynav button.navarrow{background:var(--surface);border:1px solid var(--line);border-radius:12px;color:var(--fg);font-size:1.25rem;line-height:1}
+.datepick{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:500}
+.datepick svg{color:var(--prot)}
+
+/* hero */
+.hero{gap:18px}
+.hero-top{display:grid;grid-template-columns:132px minmax(0,1fr);gap:18px;align-items:center}
+.ring{position:relative;width:132px;height:132px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .rt{stroke:var(--track)}
+.ring .rv{stroke:var(--prot);stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.2,.8,.2,1),stroke .3s}
+.ring .rv.over{stroke:var(--warn)}
+.ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.ring-c b{font-family:var(--font-display);font-weight:700;font-size:1.65rem;line-height:1}
+.ring-c span{font-size:.8rem;color:var(--muted)}
+.hero-side{display:flex;flex-direction:column;gap:8px;min-width:0}
+.hero .left{font-family:var(--font-display);font-weight:500;font-size:1.05rem;line-height:1.3}
+.hero .left.over{color:var(--warn)}
+.goalpill{align-self:flex-start;font-size:.78rem;font-weight:600;color:var(--prot);background:rgba(110,150,255,.12);border-radius:999px;padding:4px 10px}
+.goalpill:empty{display:none}
+.macros{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.macro{background:var(--surface2);border-radius:14px;padding:10px 10px 12px;gap:6px}
+.macro .label{display:flex;align-items:center;font-size:.64rem;letter-spacing:.07em}
+.macro .v{font-size:1rem}
+.macro .v span{font-size:.78rem}
+.dot{width:7px;height:7px;margin-right:5px}
+.macro.p .dot{background:var(--prot)} .macro.f .dot{background:var(--fat)} .macro.c .dot{background:var(--carb)}
+.bar{height:6px;border-radius:3px}
+.bar>i{border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+
+/* tips */
+.tip{grid-template-columns:30px minmax(0,1fr);gap:12px;align-items:center;background:var(--surface2);border-radius:14px;padding:10px 12px;line-height:1.45}
+.tip svg{width:30px;height:30px;padding:6px;border-radius:10px;margin:0;align-self:start}
+.tip.warn svg{background:rgba(242,191,90,.14)} .tip.info svg{background:rgba(110,150,255,.14)} .tip.ok svg{background:rgba(95,211,155,.14)}
+
+/* inputs & buttons */
+input,select{background:var(--field);border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:var(--fg)}
+input::placeholder{color:#5d6779}
+input:focus,select:focus{outline:none;border-color:rgba(110,150,255,.6);box-shadow:0 0 0 3px rgba(110,150,255,.18)}
+.field label{font-size:.78rem}
+.btn{border-radius:12px;padding:11px 16px;background:var(--prot);color:#0b1020;font-weight:600;transition:transform .12s ease,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:rgba(255,255,255,.04);color:var(--fg);border:1px solid var(--line)}
+.btn.danger{background:var(--warn);color:#1a0b0b}
+.chip{background:var(--chip);border:1px solid transparent;padding:8px 13px;font-size:.85rem;transition:transform .12s ease,border-color .2s}
+.chip:hover{border-color:rgba(110,150,255,.4)}
+.chip:active{transform:scale(.96)}
+.scan-btn{border-radius:12px}
+.results{border-radius:12px;border-color:var(--line);background:var(--surface2)}
+.res{background:transparent}
+.res:hover,.res:focus-visible{background:rgba(255,255,255,.04)}
+.ptip{background:rgba(242,191,90,.08);border:1px solid rgba(242,191,90,.18);border-radius:12px}
+details{border-top:1px solid var(--line);padding-top:12px}
+details summary{color:var(--fg);font-size:.92rem}
+.linkbtn{color:var(--prot);text-decoration:none;font-weight:500}
+
+/* list */
+.item{padding:12px 0}
+.item .k{background:var(--surface2);border-radius:999px;padding:4px 10px;font-size:.85rem}
+.del,.editbtn{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;color:var(--muted)}
+.del:hover{background:rgba(255,122,114,.12);color:var(--warn)}
+.iedit,.itip{background:var(--surface2);border-color:var(--line);border-radius:14px}
+.empty{color:var(--muted)}
+.head-row{gap:12px}
+.dayacts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.dayacts .btn{border-radius:12px;padding:9px 10px;font-size:.84rem;font-weight:500}
+
+.item .name{font-weight:500;line-height:1.35}
+.item .name small{margin-top:3px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.mac{display:inline-flex;gap:8px}
+.mac i{font-style:normal}
+.mac .mp{color:var(--prot)} .mac .mf{color:var(--fat)} .mac .mc{color:var(--carb)}
+.item .k{padding:3px 9px;font-size:.82rem;white-space:nowrap}
+.del,.editbtn{width:30px;height:30px}
+.acts{gap:0}
+/* collapsibles */
+.coll-head h2{font-size:1.02rem}
+.coll-sum{background:var(--surface2);border-radius:999px;padding:3px 10px;font-size:.8rem}
+.coll-sum:empty{display:none}
+.chev{color:var(--prot)}
+.norm-out div{background:var(--surface2);border-radius:14px}
+
+/* modal & toast */
+.modal{background:rgba(5,7,11,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.modal-card{background:var(--surface);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.daypick{border-radius:14px}
+.daypick button{background:var(--surface2)}
+.done{background:rgba(27,34,48,.82);border:1px solid var(--line)}
+.foot{text-align:center}
+@media (max-width:360px){.hero-top{grid-template-columns:112px minmax(0,1fr)}.ring{width:112px;height:112px}.ring-c b{font-size:1.4rem}}
 </style>
 </head>
 <body>
@@ -241,19 +342,22 @@ details[open] summary{margin-bottom:12px}
   </header>
 
   <!-- totals -->
-  <section class="panel" aria-labelledby="t-h">
-    <div class="kcal-row">
-      <div>
-        <div class="label" id="t-h">Съедено за день</div>
-        <div class="kcal-big num"><span id="kEaten">0</span><small>/ <span id="kTarget">0</span> ккал</small></div>
+  <section class="panel hero" aria-labelledby="t-h">
+    <div class="hero-top">
+      <div class="ring" aria-hidden="true">
+        <svg viewBox="0 0 120 120"><circle class="rt" cx="60" cy="60" r="52"/><circle class="rv" id="kRing" cx="60" cy="60" r="52"/></svg>
+        <div class="ring-c"><b class="num" id="kEaten">0</b><span class="num">из <span id="kTarget">0</span></span></div>
       </div>
-      <div class="left num" id="kLeft"></div>
+      <div class="hero-side">
+        <div class="label" id="t-h">Съедено, ккал</div>
+        <div class="left num" id="kLeft"></div>
+        <div class="goalpill" id="goalPill"></div>
+      </div>
     </div>
-    <div class="bar"><i id="kBar" style="width:0"></i></div>
     <div class="macros">
-      <div class="macro p"><span class="label"><span class="dot" style="background:var(--prot)"></span>Белки</span><span class="v num" id="pV"></span><div class="bar"><i id="pBar"></i></div></div>
-      <div class="macro f"><span class="label"><span class="dot" style="background:var(--fat)"></span>Жиры</span><span class="v num" id="fV"></span><div class="bar"><i id="fBar"></i></div></div>
-      <div class="macro c"><span class="label"><span class="dot" style="background:var(--carb)"></span>Углеводы</span><span class="v num" id="cV"></span><div class="bar"><i id="cBar"></i></div></div>
+      <div class="macro p"><span class="label"><span class="dot"></span>Белки</span><span class="v num" id="pV"></span><div class="bar"><i id="pBar"></i></div></div>
+      <div class="macro f"><span class="label"><span class="dot"></span>Жиры</span><span class="v num" id="fV"></span><div class="bar"><i id="fBar"></i></div></div>
+      <div class="macro c"><span class="label"><span class="dot"></span>Углеводы</span><span class="v num" id="cV"></span><div class="bar"><i id="cBar"></i></div></div>
     </div>
     <p class="hint" id="pHint"></p>
   </section>
@@ -272,7 +376,7 @@ details[open] summary{margin-bottom:12px}
     <div class="field search">
       <label for="q">Поиск продукта</label>
       <div class="search-row">
-        <input id="q" type="search" placeholder="Например: котлета, биг хит, сыр" autocomplete="off">
+        <input id="q" type="search" placeholder="Котлета, сыр, банан…" autocomplete="off">
         <button class="btn ghost scan-btn" type="button" id="scanBtn" aria-label="Сканировать штрихкод">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M3 5h2v14H3zm3 0h1v14H6zm2 0h2v14H8zm3 0h1v14h-1zm3 0h2v14h-2zm3 0h1v14h-1zm2 0h2v14h-2z"/></svg>
           <span>Скан</span>
@@ -657,7 +761,7 @@ function renderNorm(){
      <div><span class="label">Жиры</span><b>${n.f} г</b></div>
      <div><span class="label">Углеводы</span><b>${n.c} г</b></div>`;
   const gl={recomp:"рекомпозиция",gain:"набор",cut:"сушка",lose:"похудение"}[settings.goal]||"";
-  document.getElementById("normSum").textContent=`${n.k} ккал · ${gl}`;
+  document.getElementById("normSum").textContent=`${n.k} ккал`;
   const diff=n.k-n.tdee, wk=Math.abs(diff)*7/7700;
   const fmt=x=>x.toLocaleString("ru-RU",{maximumFractionDigits:1});
   document.getElementById("normHint").textContent =
@@ -676,7 +780,10 @@ function render(){
   const left=n.k-t.k, kl=document.getElementById("kLeft");
   kl.textContent= left>=0 ? `Осталось ${r(left)} ккал` : `Перебор ${r(-left)} ккал`;
   kl.className="left num"+(left<0?" over":"");
-  const kb=document.getElementById("kBar"); kb.style.width=pct(t.k,n.k); kb.style.background= left<0?"var(--warn)":"var(--fg)";
+  const C=2*Math.PI*52, ring=document.getElementById("kRing"), fr=n.k?Math.min(1,t.k/n.k):0;
+  ring.style.strokeDasharray=C; ring.style.strokeDashoffset=C*(1-fr); ring.classList.toggle("over",left<0);
+  const gl={recomp:"Рекомпозиция",gain:"Набор массы",cut:"Сушка",lose:"Похудение"}[settings.goal]||"";
+  document.getElementById("goalPill").textContent=gl;
   for(const [key,id] of [["p","p"],["f","f"],["c","c"]]){
     document.getElementById(id+"V").innerHTML=`${r(t[key])} <span>/ ${n[key]} г</span>`;
     document.getElementById(id+"Bar").style.width=pct(t[key],n[key]);
@@ -692,7 +799,7 @@ function render(){
     return `
     <div class="item">
       <div class="name">${esc(i.n)}${adv?`<button class="warnbtn" type="button" data-tip="${ix}" aria-label="Совет по продукту" aria-expanded="false">${WARN_SVG}</button>`:''}
-        <small class="num">${i.unit==="г"?r(i.g)+" г":i.amt+" "+i.unit+(i.g?" · "+r(i.g)+" г":"")} · Б ${r1(i.p)} · Ж ${r1(i.f)} · У ${r1(i.c)}</small></div>
+        <small class="num">${i.unit==="г"?r(i.g)+" г":i.amt+" "+i.unit+(i.g?" · "+r(i.g)+" г":"")}<span class="mac"><i class="mp">Б ${r(i.p)}</i><i class="mf">Ж ${r(i.f)}</i><i class="mc">У ${r(i.c)}</i></span></small></div>
       <div class="k num">${r(i.k)} ккал</div>
       <div class="acts"><button class="editbtn" type="button" data-edit="${ix}" aria-label="Изменить ${esc(i.n)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="del" type="button" data-ix="${ix}" aria-label="Удалить ${esc(i.n)}">×</button></div>
       ${editIx===ix?editRow(i,ix):''}
@@ -788,8 +895,8 @@ document.getElementById("addForm").addEventListener("submit",e=>{
   add(document.getElementById("prod").value,amt,uEl.value);
 });
 document.getElementById("quick").innerHTML=QUICK.map(([id,a])=>{
-  const p=byId(id); const lbl=p.u?`${a} ${p.u.n}`:`${a} г`;
-  return `<button class="chip" type="button" data-id="${id}" data-a="${a}"><b>${esc(p.n.replace(/\s*\(.*\)/,""))}</b> · ${lbl}</button>`;
+  const p=byId(id); const lbl=p.u?`${a} ${p.u.n}`:`${a} г`; const SHORT={whey:"Протеин",hpmilk:"Молоко Asia Mix",egg:"Яйца",prost2:"Творог 2%"};
+  return `<button class="chip" type="button" data-id="${id}" data-a="${a}"><b>${esc(SHORT[id]||p.n.replace(/\s*\(.*\)/,""))}</b> · ${lbl}</button>`;
 }).join("");
 document.getElementById("quick").addEventListener("click",e=>{
   const b=e.target.closest(".chip"); if(b) add(b.dataset.id, +b.dataset.a);
