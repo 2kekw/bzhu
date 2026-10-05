@@ -64,8 +64,11 @@ button{-webkit-tap-highlight-color:transparent}
 .editbtn:hover{color:var(--fg);background:var(--chip)}
 .iedit{grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px;align-items:end;background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:10px}
 .iedit .row{grid-column:1 / -1;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-.mylist{display:flex;flex-direction:column;border-top:1px solid var(--line);margin-top:6px}
-.mylist h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:12px 0 4px;font-weight:600}
+.mylist{display:flex;flex-direction:column}
+.linkbtn{align-self:flex-start;background:none;border:0;padding:2px 0;color:var(--prot);font:inherit;font-size:.88rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.mylist .empty{text-align:left;padding:4px 0}
+.mylist h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 0 2px;font-weight:600}
+.mylist h3:first-child{margin-top:0}
 .myrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
 .myrow:first-of-type{border-top:0}
 .myrow .nm{min-width:0;overflow-wrap:anywhere}
@@ -265,6 +268,7 @@ details[open] summary{margin-bottom:12px}
       <button class="btn" type="submit">Добавить</button>
     </form>
     <div class="unit-note num" id="preview"></div>
+    <button type="button" class="linkbtn" id="unitEdit" hidden></button>
     <div class="ptip" id="ptip" hidden></div>
     <p class="hint" id="scanStatus" role="status"></p>
 
@@ -289,8 +293,16 @@ details[open] summary{margin-bottom:12px}
           <button class="btn ghost" type="button" id="cCancel" hidden>Отмена</button>
         </div>
       </form>
-      <div class="mylist" id="myList"></div>
     </details>
+  </section>
+
+  <!-- my products -->
+  <section class="panel" aria-labelledby="my-h">
+    <div class="head-row">
+      <h2 id="my-h">Мои продукты</h2>
+      <button class="btn ghost" type="button" id="myAdd">Добавить свой</button>
+    </div>
+    <div class="mylist" id="myList"></div>
   </section>
 
   <!-- eaten -->
@@ -565,6 +577,10 @@ const todayKey = new Date().toLocaleDateString("sv-SE");
 const DEF = {sex:"m",age:24,h:185,w:80,act:"1.45",goal:"recomp"};
 let settings = Object.assign({}, DEF, S.get("settings",{}));
 let custom = S.get("custom",[]);
+let uover = S.get("uover",{});
+BASE.forEach(p=>{ if(p.u) p.u0=Object.assign({},p.u); });
+function applyOverrides(){ BASE.forEach(p=>{ if(p.per) return; const o=uover[p.id]; if(o){ p.u = o.g>0 ? {n:o.n||"порц.",g:o.g} : undefined; } else { p.u = p.u0 ? Object.assign({},p.u0) : undefined; } }); }
+applyOverrides();
 let days = S.get("days",null);
 if(!days){ days={}; const old=S.get("diary",null);
   if(old&&old.date&&Array.isArray(old.items)){const it=old.items.filter(i=>!i.ex); if(it.length) days[old.date]={items:it};} }
@@ -679,6 +695,8 @@ function onProd(){
   if(pr.u) opts.push(`<option value="u">${esc(unitLabel(pr))}</option>`);
   if(!pr.per) opts.push(`<option value="g">граммы</option>`);
   uEl.innerHTML=opts.join(""); uEl.value = pr.u?"u":"g"; uEl.disabled = opts.length<2;
+  const ue=document.getElementById("unitEdit"); ue.hidden=!!pr.per;
+  ue.textContent = pr.u ? `Изменить вес: ${pr.u.n} = ${pr.u.g} г` : "Добавить порцию или штуку";
   setAmtFor(uEl.value); preview();
 }
 function setAmtFor(mode){
@@ -933,15 +951,24 @@ document.getElementById("list").addEventListener("change",e=>{
 let delId=null;
 function renderMyList(){
   const box=document.getElementById("myList");
-  if(!custom.length){ box.innerHTML=""; return; }
-  box.innerHTML=`<h3>Сохранённые (${custom.length})</h3>`+custom.map(p=> delId===p.id
+  const ov=BASE.filter(p=>uover[p.id]);
+  if(!custom.length && !ov.length){ box.innerHTML=`<p class="empty">Здесь будут продукты, которые ты добавил сам или через сканер, и порции, вес которых ты поменял.</p>`; return; }
+  let h="";
+  if(custom.length){
+    h+=`<h3>Свои продукты (${custom.length})</h3>`+custom.map(p=> delId===p.id
     ? `<div class="myrow"><div class="nm">Удалить «${esc(p.n)}»? Записи в дневнике останутся.</div><div class="acts"><button class="btn danger" type="button" data-mydelyes="${p.id}">Да</button><button class="btn ghost" type="button" data-mydelno="1">Нет</button></div></div>`
-    : `<div class="myrow"><div class="nm">${esc(p.n)}<small class="num">${r(p.k)} ккал · Б ${r1(p.p)} · Ж ${r1(p.f)} · У ${r1(p.c)} на 100 г${p.u?` · ${esc(p.u.n)} ${p.u.g} г`:""}</small></div>
+    : `<div class="myrow"><div class="nm">${esc(p.n)}<small class="num">${r(p.k)} ккал · Б ${r1(p.p)} · Ж ${r1(p.f)} · У ${r1(p.c)} на 100 г${p.u?` · ${esc(p.u.n)} = ${p.u.g} г`:""}</small></div>
        <div class="acts"><button class="editbtn" type="button" data-myedit="${p.id}" aria-label="Изменить ${esc(p.n)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="del" type="button" data-mydel="${p.id}" aria-label="Удалить ${esc(p.n)}">×</button></div></div>`).join("");
+  }
+  if(ov.length){
+    h+=`<h3>Изменённые порции (${ov.length})</h3>`+ov.map(p=>`<div class="myrow"><div class="nm">${esc(p.n)}<small class="num">${p.u?`${esc(p.u.n)} = ${p.u.g} г`:"без порции"}${p.u0?` · было ${esc(p.u0.n)} = ${p.u0.g} г`:" · раньше только граммы"}</small></div>
+      <div class="acts"><button class="editbtn" type="button" data-portion="${p.id}" aria-label="Изменить порцию ${esc(p.n)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="del" type="button" data-reset="${p.id}" aria-label="Вернуть как было">×</button></div></div>`).join("");
+  }
+  box.innerHTML=h;
 }
 function setCustomEditMode(p){
   const f=document.getElementById("customForm");
-  if(p){ f.dataset.editId=p.id;
+  if(p){ f.closest("details").open=true; f.dataset.editId=p.id;
     const set=(id,v)=>document.getElementById(id).value=v==null?"":v;
     set("cName",p.n); set("cK",p.k); set("cP",p.p); set("cF",p.f); set("cC",p.c); set("cCode",p.code||"");
     set("cUn",p.u?p.u.n:""); set("cUg",p.u?p.u.g:"");
@@ -953,12 +980,37 @@ document.getElementById("cCancel").addEventListener("click",()=>setCustomEditMod
 document.getElementById("myList").addEventListener("click",e=>{
   const t=e.target.closest("button"); if(!t) return;
   if(t.dataset.myedit){ setCustomEditMode(custom.find(p=>p.id===t.dataset.myedit)); return; }
+  if(t.dataset.portion){ editPortion(t.dataset.portion); return; }
+  if(t.dataset.reset){ delete uover[t.dataset.reset]; S.set("uover",uover); applyOverrides(); fillProducts(document.getElementById("prod").value); renderMyList(); return; }
   if(t.dataset.mydel){ delId=t.dataset.mydel; renderMyList(); return; }
   if(t.dataset.mydelno){ delId=null; renderMyList(); return; }
   if(t.dataset.mydelyes){ custom=custom.filter(p=>p.id!==t.dataset.mydelyes); delId=null; S.set("custom",custom);
     const f=document.getElementById("customForm"); if(f.dataset.editId===t.dataset.mydelyes) setCustomEditMode(null);
     fillProducts(); renderMyList(); render(); }
 });
+// ---------- вес порции / штуки для любого продукта
+function editPortion(id){
+  const pr=byId(id); if(!pr||pr.per) return;
+  const isCustom=custom.some(p=>p.id===id);
+  const def = !isCustom && pr.u0 ? `<p>Стандартно: ${esc(pr.u0.n)} = ${pr.u0.g} г.</p>` : "";
+  const acts=[{label:"Отмена"}];
+  if(!isCustom && uover[id]) acts.push({label:"Вернуть стандарт",fn:()=>{ delete uover[id]; savePortion(id); }});
+  if(pr.u) acts.push({label:"Только граммы",fn:()=>{ if(isCustom){ delete pr.u; S.set("custom",custom); } else { uover[id]={n:"",g:0}; } savePortion(id); }});
+  acts.push({label:"Сохранить",cls:"",keep:true,fn:()=>{
+    const n=document.getElementById("pUn").value.trim()||"порц.", g=parseFloat(document.getElementById("pUg").value);
+    if(!(g>0)){ document.getElementById("pMsg").textContent="Укажи вес в граммах, больше нуля."; return; }
+    if(isCustom){ pr.u={n,g}; S.set("custom",custom); } else { uover[id]={n,g}; }
+    closeModal(); savePortion(id);
+  }});
+  openModal(`Порция: ${pr.n}`,
+    `<p>Сколько весит одна штука или порция. Например: «шт» = 95 г, «порция» = 30 г, «ломт.» = 20 г.</p>${def}
+     <div class="grid2"><div class="field"><label for="pUn">Название</label><input id="pUn" value="${esc(pr.u?pr.u.n:"шт")}"></div>
+     <div class="field"><label for="pUg">Вес, г</label><input id="pUg" type="number" inputmode="decimal" min="0" step="any" value="${pr.u?pr.u.g:""}"></div></div>
+     <p class="hint" id="pMsg"></p>`, acts);
+}
+function savePortion(id){ S.set("uover",uover); applyOverrides(); fillProducts(id); renderMyList(); render(); }
+document.getElementById("unitEdit").addEventListener("click",()=>editPortion(document.getElementById("prod").value));
+document.getElementById("myAdd").addEventListener("click",()=>{ setCustomEditMode(null); const f=document.getElementById("customForm"); f.closest("details").open=true; f.scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("cName").focus(); });
 document.getElementById("dateIn").addEventListener("change",e=>{ if(e.target.value) goDate(e.target.value); });
 document.getElementById("goToday").addEventListener("click",()=>goDate(todayKey));
 document.getElementById("prevDay").addEventListener("click",()=>goDay(-1));
@@ -967,7 +1019,7 @@ document.getElementById("nextDay").addEventListener("click",()=>goDay(1));
 // backup
 const msg=t=>document.getElementById("backupMsg").textContent=t;
 document.getElementById("exportBtn").addEventListener("click",()=>{
-  const data={app:"bzhu",v:1,exported:new Date().toISOString(),settings,custom,days};
+  const data={app:"bzhu",v:1,exported:new Date().toISOString(),settings,custom,days,uover};
   const blob=new Blob([JSON.stringify(data,null,1)],{type:"application/json"});
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="bzhu-backup-"+todayKey+".json";
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
@@ -983,6 +1035,7 @@ document.getElementById("importFile").addEventListener("change",e=>{
       if(d.app!=="bzhu"||!d.days) throw 0;
       settings=Object.assign({},DEF,d.settings||{}); custom=Array.isArray(d.custom)?d.custom:[];
       days=Object.assign({},days,d.days); diary=days[cur]||(days[cur]={items:[]});
+      if(d.uover){ uover=d.uover; S.set("uover",uover); applyOverrides(); }
       S.set("settings",settings); S.set("custom",custom);
       for(const id of ["sex","age","h","w","act","goal"]) document.getElementById(id).value=settings[id];
       fillProducts(); render(); renderMyList(); msg("Данные загружены.");
