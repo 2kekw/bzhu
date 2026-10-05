@@ -53,7 +53,23 @@ button{-webkit-tap-highlight-color:transparent}
 .daynav{display:flex;align-items:center;gap:8px;margin-top:4px}
 .daynav button{background:var(--surface);border:1px solid var(--line);border-radius:8px;width:36px;height:32px;font-size:1.1rem;cursor:pointer;color:var(--fg)}
 .daynav button:disabled{opacity:.35;cursor:default}
-.daynav span{color:var(--muted);font-size:.92rem;min-width:0}
+.daynav{flex-wrap:wrap}
+.datepick{position:relative;display:inline-flex;align-items:center;gap:8px;padding:5px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font-size:.92rem;cursor:pointer;min-width:0;max-width:100%}
+.datepick span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.datepick svg{flex:none;color:var(--muted)}
+.datepick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;font-size:16px}
+.todaybtn{width:auto!important;padding:0 10px;font-size:.85rem!important;font-weight:600}
+.acts{display:flex;gap:2px;align-items:center}
+.editbtn{background:none;border:0;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px;display:inline-flex}
+.editbtn:hover{color:var(--fg);background:var(--chip)}
+.iedit{grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px;align-items:end;background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:10px}
+.iedit .row{grid-column:1 / -1;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.mylist{display:flex;flex-direction:column;border-top:1px solid var(--line);margin-top:6px}
+.mylist h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:12px 0 4px;font-weight:600}
+.myrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.myrow:first-of-type{border-top:0}
+.myrow .nm{min-width:0;overflow-wrap:anywhere}
+.myrow small{display:block;color:var(--muted);font-size:.8rem}
 .backup{display:flex;gap:8px;flex-wrap:wrap}
 body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.5}
 .wrap{max-width:680px;margin:0 auto;padding-inline:16px;padding-block:24px 48px;display:flex;flex-direction:column;gap:20px}
@@ -136,9 +152,27 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .itip{grid-column:1 / -1;background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:.88rem;line-height:1.45}
 .ptip{display:grid;grid-template-columns:20px minmax(0,1fr);gap:8px;font-size:.86rem;color:var(--fg);background:var(--chip);border-radius:8px;padding:9px 11px}
 .ptip svg{color:var(--fat);margin-top:1px}
+/* day actions + modal */
+.dayacts{display:flex;gap:8px;flex-wrap:wrap}
+.dayacts .btn{padding:8px 12px;font-size:.88rem}
+.btn:disabled{opacity:.4;cursor:default}
+.modal{position:fixed;inset:0;z-index:60;background:rgba(10,12,16,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+@media (min-width:560px){.modal{align-items:center}}
+.modal-card{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:14px;width:100%;max-width:440px;max-height:80vh;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.modal-card h3{margin:0;font-family:var(--font-display);font-weight:500;font-size:1rem}
+.modal-body p{margin:0;color:var(--muted);font-size:.92rem}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.daypick{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.daypick button{display:flex;justify-content:space-between;gap:10px;text-align:left;background:var(--surface);color:var(--fg);border:0;border-top:1px solid var(--line);padding:11px 12px;cursor:pointer;font:inherit}
+.daypick button:first-child{border-top:0}
+.daypick button:hover{background:var(--chip)}
+.daypick small{color:var(--muted);white-space:nowrap}
+.otherday{display:flex;gap:8px;align-items:end}
+.otherday .field{flex:1}
+
 /* eaten list */
 .list{display:flex;flex-direction:column}
-.item{display:grid;grid-template-columns:minmax(0,1fr) auto auto;row-gap:8px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:6px;row-gap:8px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .item:first-child{border-top:0}
 .item .name{min-width:0;overflow-wrap:anywhere}
 .item .name small{display:block;color:var(--muted);font-size:.82rem}
@@ -172,7 +206,7 @@ details[open] summary{margin-bottom:12px}
 <div class="wrap">
   <header>
     <h1>Дневник БЖУ</h1>
-    <div class="daynav"><button type="button" id="prevDay" aria-label="Предыдущий день">‹</button><span id="today"></span><button type="button" id="nextDay" aria-label="Следующий день">›</button></div>
+    <div class="daynav"><button type="button" id="prevDay" aria-label="Предыдущий день">‹</button><label class="datepick"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span id="today"></span><input type="date" id="dateIn" aria-label="Выбрать дату"></label><button type="button" id="nextDay" aria-label="Следующий день">›</button><button type="button" class="todaybtn" id="goToday" hidden>Сегодня</button></div>
   </header>
 
   <!-- totals -->
@@ -250,8 +284,12 @@ details[open] summary{margin-bottom:12px}
           <div class="field"><label for="cUn">Название порции</label><input id="cUn" placeholder="порция, шт, скуп"></div>
           <div class="field"><label for="cUg">Вес порции, г</label><input id="cUg" type="number" step="any" min="0" placeholder="например, 30"></div>
         </div>
-        <button class="btn ghost" type="submit">Сохранить в список</button>
+        <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ghost" type="submit" id="cSave">Сохранить в список</button>
+          <button class="btn ghost" type="button" id="cCancel" hidden>Отмена</button>
+        </div>
       </form>
+      <div class="mylist" id="myList"></div>
     </details>
   </section>
 
@@ -259,7 +297,7 @@ details[open] summary{margin-bottom:12px}
   <section class="panel" aria-labelledby="e-h">
     <div class="head-row">
       <h2 id="e-h">Что съел</h2>
-      <div id="clearWrap"><button class="btn ghost" type="button" id="clearBtn">Очистить день</button></div>
+      <div class="dayacts"><button class="btn ghost" type="button" id="copyBtn">Перенести с другого дня</button><button class="btn ghost" type="button" id="clearBtn">Очистить день</button></div>
     </div>
     <div class="list" id="list"></div>
   </section>
@@ -333,6 +371,14 @@ details[open] summary{margin-bottom:12px}
     </div>
     <p class="hint" id="backupMsg" role="status"></p>
   </section>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <h3 id="mTitle"></h3>
+      <div id="mBody" class="modal-body"></div>
+      <div class="modal-actions" id="mActions"></div>
+    </div>
+  </div>
 
   <p class="foot">Значения продуктов средние, на 100 г; блюда «Вкусно и точка» считаются на штуку или порцию, в разных ресторанах цифры могут отличаться на 5–10%. Для протеина, батончика и белкового молока сверься с этикеткой и при желании добавь их как свой продукт. Данные хранятся только на этом устройстве.</p>
 </div>
@@ -525,10 +571,12 @@ if(!days){ days={}; const old=S.get("diary",null);
 let cur = todayKey;
 let diary = days[cur] || (days[cur]={items:[]});
 function shiftDay(key,n){const [y,m,d]=key.split("-").map(Number);return new Date(y,m-1,d+n).toLocaleDateString("sv-SE");}
-function goDay(n){
-  const next=shiftDay(cur,n); if(next>todayKey) return;
-  cur=next; diary=days[cur]||(days[cur]={items:[]}); render();
+function goDay(n){ goDate(shiftDay(cur,n)); }
+function goDate(key){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(key)) return; if(key>todayKey) key=todayKey;
+  cur=key; editIx=-1; diary=days[cur]||(days[cur]={items:[]}); render();
 }
+let editIx=-1;
 function saveDays(){
   for(const k of Object.keys(days)) if(k!==cur && !(days[k].items||[]).length) delete days[k];
   S.set("days",days);
@@ -598,15 +646,19 @@ function render(){
       <div class="name">${esc(i.n)}${adv?`<button class="warnbtn" type="button" data-tip="${ix}" aria-label="Совет по продукту" aria-expanded="false">${WARN_SVG}</button>`:''}
         <small class="num">${i.unit==="г"?r(i.g)+" г":i.amt+" "+i.unit+(i.g?" · "+r(i.g)+" г":"")} · Б ${r1(i.p)} · Ж ${r1(i.f)} · У ${r1(i.c)}</small></div>
       <div class="k num">${r(i.k)} ккал</div>
-      <button class="del" type="button" data-ix="${ix}" aria-label="Удалить ${esc(i.n)}">×</button>
+      <div class="acts"><button class="editbtn" type="button" data-edit="${ix}" aria-label="Изменить ${esc(i.n)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="del" type="button" data-ix="${ix}" aria-label="Удалить ${esc(i.n)}">×</button></div>
+      ${editIx===ix?editRow(i,ix):''}
       ${adv?`<div class="itip" id="itip${ix}" hidden>${esc(adv)}</div>`:''}
     </div>`;}).join("");
   renderTips(t,n);
+  document.getElementById("clearBtn").disabled=!diary.items.length;
   saveDays();
   const [y,m,d]=cur.split("-").map(Number); const dt=new Date(y,m-1,d);
   const lbl=dt.toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
   document.getElementById("today").textContent = cur===todayKey ? "Сегодня, "+lbl : cur===shiftDay(todayKey,-1) ? "Вчера, "+lbl : lbl.charAt(0).toUpperCase()+lbl.slice(1);
   document.getElementById("nextDay").disabled = cur>=todayKey;
+  const di=document.getElementById("dateIn"); di.max=todayKey; di.value=cur;
+  document.getElementById("goToday").hidden = cur===todayKey;
   document.getElementById("e-h").textContent = cur===todayKey ? "Что съел сегодня" : "Что съел в этот день";
 }
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
@@ -688,27 +740,76 @@ document.getElementById("quick").addEventListener("click",e=>{
 document.getElementById("list").addEventListener("click",e=>{
   const w=e.target.closest(".warnbtn");
   if(w){const tp=document.getElementById("itip"+w.dataset.tip); tp.hidden=!tp.hidden; w.setAttribute("aria-expanded",String(!tp.hidden)); return;}
+  const ed=e.target.closest(".editbtn"); if(ed){ editIx = editIx===+ed.dataset.edit ? -1 : +ed.dataset.edit; render(); return; }
+  if(e.target.closest(".ie-cancel")){ editIx=-1; render(); return; }
+  if(e.target.closest(".ie-save")){ saveEdit(); return; }
   const b=e.target.closest(".del"); if(!b) return;
-  diary.items.splice(+b.dataset.ix,1); render();
+  diary.items.splice(+b.dataset.ix,1); editIx=-1; render();
 });
-const cw=document.getElementById("clearWrap");
-function clearBtn(){cw.innerHTML=`<button class="btn ghost" type="button" id="clearBtn">Очистить день</button>`;}
-cw.addEventListener("click",e=>{
-  const id=e.target.id;
-  if(id==="clearBtn") cw.innerHTML=`<span class="confirm">Удалить всё за сегодня? <button class="btn danger" type="button" id="clearYes">Да</button><button class="btn ghost" type="button" id="clearNo">Нет</button></span>`;
-  else if(id==="clearYes"){diary.items=[];render();clearBtn();}
-  else if(id==="clearNo") clearBtn();
+// ---------- модальное окно, очистка и перенос дня
+const modal=document.getElementById("modal");
+function openModal(title,body,actions){
+  document.getElementById("mTitle").textContent=title;
+  document.getElementById("mBody").innerHTML=body;
+  const box=document.getElementById("mActions"); box.innerHTML="";
+  actions.forEach(a=>{ const b=document.createElement("button"); b.type="button"; b.className="btn "+(a.cls||"ghost"); b.textContent=a.label; b.addEventListener("click",()=>{ if(a.keep!==true) closeModal(); a.fn&&a.fn(); }); box.appendChild(b); });
+  modal.hidden=false; document.body.style.overflow="hidden";
+}
+function closeModal(){ modal.hidden=true; document.body.style.overflow=""; }
+modal.addEventListener("click",e=>{ if(e.target===modal) closeModal(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!modal.hidden) closeModal(); });
+function dayName(key){
+  const [y,m,d]=key.split("-").map(Number); const lbl=new Date(y,m-1,d).toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+  return key===todayKey ? "сегодня, "+lbl : key===shiftDay(todayKey,-1) ? "вчера, "+lbl : lbl;
+}
+const kcalOf=items=>r(items.reduce((a,i)=>a+i.k,0));
+function plural(n,a,b,c){ n=Math.abs(n)%100; const n1=n%10; if(n>10&&n<20) return c; if(n1>1&&n1<5) return b; if(n1===1) return a; return c; }
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  const n=diary.items.length; if(!n) return;
+  openModal(cur===todayKey?"Очистить сегодняшний день?":"Очистить этот день?",
+    `<p>Будут удалены все записи за ${esc(dayName(cur))}: ${n} ${plural(n,"запись","записи","записей")}, ${kcalOf(diary.items)} ккал. Отменить это действие нельзя.</p>`,
+    [{label:"Отмена"},{label:"Да, очистить",cls:"danger",fn:()=>{ diary.items=[]; editIx=-1; render(); }}]);
+});
+function copyFrom(src){
+  const items=(days[src]&&days[src].items)||[]; if(!items.length) return;
+  const doCopy=replace=>{ const copy=JSON.parse(JSON.stringify(items)); diary.items = replace ? copy : diary.items.concat(copy); editIx=-1; render(); };
+  if(!diary.items.length){ doCopy(true); return; }
+  openModal("На этот день уже есть записи",
+    `<p>За ${esc(dayName(cur))} уже ${diary.items.length} ${plural(diary.items.length,"запись","записи","записей")}. Добавить записи за ${esc(dayName(src))} к ним или заменить?</p>`,
+    [{label:"Отмена"},{label:"Заменить",cls:"danger",fn:()=>doCopy(true)},{label:"Добавить",cls:"",fn:()=>doCopy(false)}]);
+}
+document.getElementById("copyBtn").addEventListener("click",()=>{
+  const keys=Object.keys(days).filter(k=>k!==cur && (days[k].items||[]).length).sort().reverse().slice(0,10);
+  const list = keys.length
+    ? `<div class="daypick">${keys.map(k=>`<button type="button" data-src="${k}"><span>${esc(dayName(k).replace(/^./,c=>c.toUpperCase()))}</span><small class="num">${days[k].items.length} ${plural(days[k].items.length,"запись","записи","записей")} · ${kcalOf(days[k].items)} ккал</small></button>`).join("")}</div>`
+    : `<p>Пока нет других дней с записями.</p>`;
+  openModal(`Перенести записи на ${dayName(cur)}`,
+    `<p>Выбери день, с которого скопировать всю еду.</p>${list}
+     <div class="otherday"><div class="field"><label for="srcDate">Другая дата</label><input type="date" id="srcDate" max="${todayKey}"></div><button class="btn" type="button" id="srcGo">Выбрать</button></div>
+     <p class="hint" id="srcMsg"></p>`,
+    [{label:"Закрыть"}]);
+  document.querySelectorAll(".daypick button").forEach(b=>b.addEventListener("click",()=>{ closeModal(); copyFrom(b.dataset.src); }));
+  document.getElementById("srcGo").addEventListener("click",()=>{
+    const k=document.getElementById("srcDate").value;
+    if(!k){ document.getElementById("srcMsg").textContent="Выбери дату."; return; }
+    if(k===cur){ document.getElementById("srcMsg").textContent="Это тот же день, выбери другой."; return; }
+    if(!(days[k]&&days[k].items&&days[k].items.length)){ document.getElementById("srcMsg").textContent="В этот день записей нет."; return; }
+    closeModal(); copyFrom(k);
+  });
 });
 document.getElementById("customForm").addEventListener("submit",e=>{
   e.preventDefault();
   const g=id=>parseFloat(document.getElementById(id).value)||0;
   const p={id:"c"+Date.now(), n:document.getElementById("cName").value.trim(), k:g("cK"),p:g("cP"),f:g("cF"),c:g("cC")};
   const ug=g("cUg"); if(ug>0) p.u={n:document.getElementById("cUn").value.trim()||"порц.", g:ug};
-  const code=document.getElementById("cCode").value; if(code){ custom=custom.filter(x=>x.code!==code); p.code=code; }
+  const code=document.getElementById("cCode").value; if(code){ const keep=e.target.dataset.editId; custom=custom.filter(x=>x.code!==code||x.id===keep); p.code=code; }
   scanStatus.textContent="";
   if(!p.n) return;
-  custom.push(p); S.set("custom",custom); e.target.reset(); fillProducts(p.id);
-  e.target.closest("details").open=false;
+  const eid=e.target.dataset.editId;
+  if(eid){ const ix=custom.findIndex(x=>x.id===eid); p.id=eid; if(ix>=0) custom[ix]=p; else custom.push(p); }
+  else custom.push(p);
+  S.set("custom",custom); setCustomEditMode(null); fillProducts(p.id); renderMyList(); render();
+  if(!eid) e.target.closest("details").open=false;
 });
 for(const id of ["sex","age","h","w","act","goal"]){
   const el=document.getElementById(id); el.value=settings[id];
@@ -800,6 +901,66 @@ function renderTips(t,n){
 function tipHtml(l,tx){ return `<div class="tip ${l}">${l==="warn"?WARN_SVG:l==="ok"?OK_SVG:INFO_SVG}<span>${esc(tx)}</span></div>`; }
 
 
+
+// ---------- редактирование записи
+function editRow(i,ix){
+  const pr=prodOf(i); const mode=i.unit==="г"?"g":"u";
+  let opts="";
+  if(pr){ if(pr.u) opts+=`<option value="u"${mode==="u"?" selected":""}>${esc(unitLabel(pr))}</option>`; if(!pr.per) opts+=`<option value="g"${mode==="g"?" selected":""}>граммы</option>`; }
+  else opts=`<option value="${mode}">${esc(mode==="g"?"граммы":i.unit)}</option>`;
+  return `<div class="iedit">
+    <div class="field"><label for="ieAmt">Количество</label><input id="ieAmt" type="number" inputmode="decimal" min="0" step="any" value="${i.amt!=null?(i.unit==="г"?r(i.g):i.amt):r(i.g)}"></div>
+    <div class="field"><label for="ieUnit">Единица</label><select id="ieUnit">${opts}</select></div>
+    <div class="row"><button class="btn ghost ie-cancel" type="button">Отмена</button><button class="btn ie-save" type="button">Сохранить</button></div>
+  </div>`;
+}
+function saveEdit(){
+  const i=diary.items[editIx]; if(!i){ editIx=-1; render(); return; }
+  const amt=parseFloat(document.getElementById("ieAmt").value); if(!(amt>0)) return;
+  const mode=document.getElementById("ieUnit").value, pr=prodOf(i);
+  let ni;
+  if(pr) ni=mk(pr.id,amt,mode);
+  else { const base = i.unit==="г" ? i.g : i.amt; const kf=base? amt/base : 1; ni=Object.assign({},i,{amt, g:i.g!=null?i.g*kf:null, k:i.k*kf,p:i.p*kf,f:i.f*kf,c:i.c*kf}); }
+  diary.items[editIx]=ni; editIx=-1; render();
+}
+document.getElementById("list").addEventListener("change",e=>{
+  if(e.target.id!=="ieUnit") return;
+  const i=diary.items[editIx], pr=prodOf(i), a=document.getElementById("ieAmt"), v=parseFloat(a.value)||0;
+  if(pr&&pr.u&&pr.u.g){ a.value = e.target.value==="g" ? r(v*pr.u.g) : Math.max(0.5,Math.round(v/pr.u.g*2)/2); }
+});
+
+// ---------- свои продукты: список, правка, удаление
+let delId=null;
+function renderMyList(){
+  const box=document.getElementById("myList");
+  if(!custom.length){ box.innerHTML=""; return; }
+  box.innerHTML=`<h3>Сохранённые (${custom.length})</h3>`+custom.map(p=> delId===p.id
+    ? `<div class="myrow"><div class="nm">Удалить «${esc(p.n)}»? Записи в дневнике останутся.</div><div class="acts"><button class="btn danger" type="button" data-mydelyes="${p.id}">Да</button><button class="btn ghost" type="button" data-mydelno="1">Нет</button></div></div>`
+    : `<div class="myrow"><div class="nm">${esc(p.n)}<small class="num">${r(p.k)} ккал · Б ${r1(p.p)} · Ж ${r1(p.f)} · У ${r1(p.c)} на 100 г${p.u?` · ${esc(p.u.n)} ${p.u.g} г`:""}</small></div>
+       <div class="acts"><button class="editbtn" type="button" data-myedit="${p.id}" aria-label="Изменить ${esc(p.n)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="del" type="button" data-mydel="${p.id}" aria-label="Удалить ${esc(p.n)}">×</button></div></div>`).join("");
+}
+function setCustomEditMode(p){
+  const f=document.getElementById("customForm");
+  if(p){ f.dataset.editId=p.id;
+    const set=(id,v)=>document.getElementById(id).value=v==null?"":v;
+    set("cName",p.n); set("cK",p.k); set("cP",p.p); set("cF",p.f); set("cC",p.c); set("cCode",p.code||"");
+    set("cUn",p.u?p.u.n:""); set("cUg",p.u?p.u.g:"");
+    document.getElementById("cSave").textContent="Сохранить изменения"; document.getElementById("cCancel").hidden=false;
+    f.scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("cName").focus();
+  } else { delete f.dataset.editId; f.reset(); document.getElementById("cSave").textContent="Сохранить в список"; document.getElementById("cCancel").hidden=true; }
+}
+document.getElementById("cCancel").addEventListener("click",()=>setCustomEditMode(null));
+document.getElementById("myList").addEventListener("click",e=>{
+  const t=e.target.closest("button"); if(!t) return;
+  if(t.dataset.myedit){ setCustomEditMode(custom.find(p=>p.id===t.dataset.myedit)); return; }
+  if(t.dataset.mydel){ delId=t.dataset.mydel; renderMyList(); return; }
+  if(t.dataset.mydelno){ delId=null; renderMyList(); return; }
+  if(t.dataset.mydelyes){ custom=custom.filter(p=>p.id!==t.dataset.mydelyes); delId=null; S.set("custom",custom);
+    const f=document.getElementById("customForm"); if(f.dataset.editId===t.dataset.mydelyes) setCustomEditMode(null);
+    fillProducts(); renderMyList(); render(); }
+});
+document.getElementById("dateIn").addEventListener("change",e=>{ if(e.target.value) goDate(e.target.value); });
+document.getElementById("goToday").addEventListener("click",()=>goDate(todayKey));
 document.getElementById("prevDay").addEventListener("click",()=>goDay(-1));
 document.getElementById("nextDay").addEventListener("click",()=>goDay(1));
 
@@ -824,7 +985,7 @@ document.getElementById("importFile").addEventListener("change",e=>{
       days=Object.assign({},days,d.days); diary=days[cur]||(days[cur]={items:[]});
       S.set("settings",settings); S.set("custom",custom);
       for(const id of ["sex","age","h","w","act","goal"]) document.getElementById(id).value=settings[id];
-      fillProducts(); render(); msg("Данные загружены.");
+      fillProducts(); render(); renderMyList(); msg("Данные загружены.");
     }catch(err){ msg("Это не файл резервной копии дневника. Выбери файл bzhu-backup-….json."); }
     e.target.value="";
   };
@@ -952,7 +1113,7 @@ async function lookup(code){
 // iOS Safari ignores user-scalable=no for pinch: block zoom gestures explicitly
 ["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 document.addEventListener("touchmove",e=>{ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false});
-fillProducts(); render();
+fillProducts(); render(); renderMyList();
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
 </script>
 </body>
