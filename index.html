@@ -40,8 +40,11 @@
 
 *{box-sizing:border-box}
 :root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html,body{margin:0;width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-.wrap{overflow-x:clip}
+html,body{margin:0;width:100%;max-width:100%;overscroll-behavior-x:none;touch-action:pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* только html обрезает по горизонтали: если обрезать и body, он становится прокручиваемым блоком, и Safari на iPhone обрезает меню и окна по его высоте */
+html{overflow-x:hidden}
+body{overflow:visible;min-height:100%}
+.wrap{overflow-x:clip;min-height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:calc(100lvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
 input,select,textarea{font-size:16px!important}
 [hidden]{display:none!important}
 button{-webkit-tap-highlight-color:transparent}
