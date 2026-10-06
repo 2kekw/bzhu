@@ -330,13 +330,82 @@ details summary{color:var(--fg);font-size:.92rem}
 .done{background:rgba(27,34,48,.82);border:1px solid var(--line)}
 .foot{text-align:center}
 @media (max-width:360px){.hero-top{grid-template-columns:112px minmax(0,1fr)}.ring{width:112px;height:112px}.ring-c b{font-size:1.4rem}}
+
+/* ================= v2: tabs, progress, stats, account ================= */
+.wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.topbar{display:flex;align-items:center;justify-content:space-between}
+.tabpane{display:flex;flex-direction:column;gap:16px}
+.tabpane>header{display:flex;flex-direction:column}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));background:rgba(15,20,29,.86);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border-top:1px solid var(--line)}
+.tabbar button{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;color:var(--muted);font:inherit;font-size:.68rem;font-weight:500;padding:6px 0;cursor:pointer;border-radius:12px;transition:color .2s}
+.tabbar button.on{color:var(--fg)}
+.tabbar button.on svg{color:var(--prot)}
+.tabbar button:active{transform:scale(.95)}
+.seg{display:inline-flex;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
+.seg button{background:none;border:0;color:var(--muted);font:inherit;font-size:.82rem;font-weight:500;padding:6px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--surface2);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.seg.wide{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;width:100%}
+.datepick.small{padding:6px 12px;font-size:.85rem}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kpi{background:var(--surface2);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi .label{font-size:.62rem}
+.kpi b{font-family:var(--font-display);font-weight:500;font-size:1.05rem;white-space:nowrap}
+.kpi b small{font-family:var(--font-body);font-size:.75rem;color:var(--muted);font-weight:500;margin-left:2px}
+.kpi .d{font-size:.78rem;font-weight:600}
+.good{color:var(--carb)} .bad{color:var(--warn)} .neutral{color:var(--muted)}
+.chart{width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .gl{stroke:rgba(255,255,255,.06);stroke-width:1}
+.chart .ax{fill:var(--muted);font-size:10px;font-family:var(--font-body)}
+.chart .empty{fill:var(--muted);font-size:12px}
+.chartempty{padding:28px 0;text-align:center;color:var(--muted);font-size:.9rem}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tile{background:var(--surface2);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.tile b{font-family:var(--font-display);font-weight:500;font-size:1.3rem;line-height:1.1}
+.tile b small{font-family:var(--font-body);font-size:.78rem;color:var(--muted);font-weight:500;margin-left:3px}
+.tile .s{font-size:.78rem;color:var(--muted)}
+.legend{display:flex;gap:6px;align-items:center;font-size:.72rem;color:var(--muted);flex-wrap:wrap}
+.lg{display:inline-block;width:8px;height:8px;border-radius:2px;margin-left:4px}
+.lg.ok{background:var(--carb)} .lg.over{background:var(--warn)} .lg.under{background:#4b5568}
+.split{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--track)}
+.split i{display:block;height:100%}
+.splitleg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.splitleg div{display:flex;flex-direction:column;gap:2px;font-size:.78rem;color:var(--muted)}
+.splitleg b{font-size:1rem;color:var(--fg);font-weight:600}
+.toprow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:9px 0;border-top:1px solid var(--line);align-items:center}
+.toprow:first-child{border-top:0}
+.toprow span{min-width:0;overflow-wrap:anywhere}
+.toprow small{color:var(--muted);font-size:.8rem;white-space:nowrap}
+.bmrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.bmrow:first-child{border-top:0}
+.bmrow .dt{color:var(--muted);font-size:.85rem}
+.bmrow .vals{display:flex;gap:12px;font-weight:600}
+.pill{font-size:.75rem;font-weight:600;border-radius:999px;padding:4px 10px}
+.pill.off{background:rgba(255,255,255,.06);color:var(--muted)}
+.pill.on{background:rgba(95,211,155,.14);color:var(--carb)}
+.authform{display:flex;flex-direction:column;gap:12px}
+.authbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.backup{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.backup .btn{padding:11px 8px}
+.me{display:flex;align-items:center;gap:12px}
+.ava{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--prot),var(--carb));color:#0b1020;font-family:var(--font-display);font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;text-transform:uppercase}
+.me-t{display:flex;flex-direction:column;min-width:0}
+.me-t b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill.busy{background:rgba(110,150,255,.14);color:var(--prot)}
+.pill.err{background:rgba(255,122,114,.14);color:var(--warn)}
+.demo{font-size:.75rem;color:var(--fat);background:rgba(242,191,90,.1);border:1px solid rgba(242,191,90,.2);border-radius:10px;padding:8px 10px}
+@media (max-width:360px){.kpi b{font-size:.95rem}.seg button{padding:6px 9px}}
 </style>
 </head>
 <body>
 
 <div class="wrap">
+  <header class="topbar">
+    <h1 id="pageTitle">Дневник БЖУ</h1>
+  </header>
+
+  <div class="tabpane" id="tab-diary">
   <header>
-    <h1>Дневник БЖУ</h1>
     <div class="daynav"><button type="button" class="navarrow" id="prevDay" aria-label="Предыдущий день">‹</button><label class="datepick"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span id="today"></span><input type="date" id="dateIn" aria-label="Выбрать дату"></label><button type="button" class="navarrow" id="nextDay" aria-label="Следующий день">›</button></div>
     <div class="todayrow"><button type="button" class="linkbtn" id="goToday" hidden>Вернуться к сегодня</button></div>
   </header>
@@ -503,10 +572,82 @@ details summary{color:var(--fg);font-size:.92rem}
     </div>
   </div>
 
+
+  </div>
+
+  <!-- ===== progress ===== -->
+  <div class="tabpane" id="tab-progress" hidden>
+    <section class="panel" aria-labelledby="bm-h">
+      <div class="head-row"><h2 id="bm-h">Замер</h2><label class="datepick small"><span id="bmDateLbl"></span><input type="date" id="bmDate" aria-label="Дата замера"></label></div>
+      <div class="grid2">
+        <div class="field"><label for="bmW">Вес, кг</label><input id="bmW" type="number" inputmode="decimal" step="0.1" min="30" max="300" placeholder="например, 79.6"></div>
+        <div class="field"><label for="bmWaist">Талия, см</label><input id="bmWaist" type="number" inputmode="decimal" step="0.5" min="40" max="200" placeholder="например, 84"></div>
+      </div>
+      <button class="btn" type="button" id="bmSave">Сохранить замер</button>
+      <p class="hint">Взвешивайся утром натощак. Талию меряй там же, на уровне пупка, без втягивания живота. Достаточно 1–2 раз в неделю.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="pc-h">
+      <div class="head-row">
+        <h2 id="pc-h">Динамика</h2>
+        <div class="seg" role="tablist" id="pcMetric"><button type="button" class="on" data-m="w">Вес</button><button type="button" data-m="waist">Талия</button></div>
+      </div>
+      <div class="kpis" id="pcKpis"></div>
+      <div class="chart" id="pcChart"></div>
+      <div class="seg wide" id="pcRange"><button type="button" data-r="30" class="on">30 дней</button><button type="button" data-r="90">90 дней</button><button type="button" data-r="0">Всё время</button></div>
+      <p class="hint" id="pcHint"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="bl-h">
+      <h2 id="bl-h">Все замеры</h2>
+      <div class="list" id="bmList"></div>
+    </section>
+  </div>
+
+  <!-- ===== stats ===== -->
+  <div class="tabpane" id="tab-stats" hidden>
+    <section class="panel">
+      <div class="seg wide" id="stRange"><button type="button" data-r="7" class="on">Неделя</button><button type="button" data-r="30">Месяц</button></div>
+      <div class="tiles" id="stTiles"></div>
+    </section>
+    <section class="panel" aria-labelledby="sk-h">
+      <div class="head-row"><h2 id="sk-h">Калории по дням</h2><span class="legend"><i class="lg ok"></i>в норме <i class="lg over"></i>перебор <i class="lg under"></i>недобор</span></div>
+      <div class="chart" id="stChart"></div>
+    </section>
+    <section class="panel" aria-labelledby="sm-h">
+      <h2 id="sm-h">Из чего калории</h2>
+      <div class="split" id="stSplit"></div>
+      <div class="splitleg" id="stSplitLeg"></div>
+      <p class="hint" id="stSplitHint"></p>
+    </section>
+    <section class="panel" aria-labelledby="st-h">
+      <h2 id="st-h">Чаще всего ел</h2>
+      <div class="list" id="stTop"></div>
+    </section>
+  </div>
+
+  <!-- ===== account ===== -->
+  <div class="tabpane" id="tab-account" hidden>
+    <section class="panel" aria-labelledby="ac-h">
+      <div class="head-row"><h2 id="ac-h">Синхронизация</h2><span class="pill off" id="syncPill">Выключена</span></div>
+      <p class="hint" id="auIntro">Войди в аккаунт, и дневник, замеры и свои продукты будут храниться на сервере. Они не пропадут при смене или потере телефона и будут одинаковыми на всех твоих устройствах.</p>
+      <div class="me" id="auMe" hidden>
+        <div class="ava" id="auAva">K</div>
+        <div class="me-t"><b id="auWho"></b><span class="hint" id="auLast"></span></div>
+      </div>
+      <div class="authbtns" id="auActs" hidden><button class="btn ghost" type="button" id="auSync">Синхронизировать</button><button class="btn ghost" type="button" id="auOut">Выйти</button></div>
+      <form class="authform" id="authForm" autocomplete="on">
+        <div class="field"><label for="auEmail">Почта</label><input id="auEmail" type="email" autocomplete="email" placeholder="name@mail.ru"></div>
+        <div class="field"><label for="auPass">Пароль</label><input id="auPass" type="password" autocomplete="current-password" placeholder="не меньше 8 символов"></div>
+        <div class="authbtns"><button class="btn" type="submit" id="auLogin">Войти</button><button class="btn ghost" type="button" id="auReg">Создать аккаунт</button></div>
+        <button type="button" class="linkbtn" id="auForgot">Забыл пароль</button>
+      </form>
+      <p class="hint" id="auMsg" role="status"></p>
+    </section>
   <section class="panel" aria-labelledby="b-h">
     <div>
       <h2 id="b-h">Резервная копия</h2>
-      <p class="hint">Дневник хранится только на этом устройстве. Сохрани файл, чтобы перенести данные на другой телефон или компьютер.</p>
+      <p class="hint">Файл с полной копией дневника, замеров и твоих продуктов. Пригодится, если не пользуешься синхронизацией или хочешь подстраховаться.</p>
     </div>
     <div class="backup">
       <button class="btn ghost" type="button" id="exportBtn">Сохранить в файл</button>
@@ -515,6 +656,19 @@ details summary{color:var(--fg);font-size:.92rem}
     </div>
     <p class="hint" id="backupMsg" role="status"></p>
   </section>
+
+    <section class="panel" aria-labelledby="ab-h">
+      <h2 id="ab-h">О приложении</h2>
+      <p class="hint">Дневник БЖУ · версия <span id="appVer">2.0</span>. Данные о продуктах средние, сверяйся с этикеткой.</p>
+    </section>
+  </div>
+
+  <nav class="tabbar" aria-label="Разделы">
+    <button type="button" class="on" data-tab="diary"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4Z"/><path d="M9 9h6M9 13h6M5 17a3 3 0 0 1 3-3h11"/></svg><span>Дневник</span></button>
+    <button type="button" data-tab="progress"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19 9.5 12l4 3.5L20 7"/><path d="M15 7h5v5"/></svg><span>Прогресс</span></button>
+    <button type="button" data-tab="stats"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11M12 20V5M19 20v-6"/></svg><span>Статистика</span></button>
+    <button type="button" data-tab="account"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c1.2-3.6 3.8-5.4 7-5.4s5.8 1.8 7 5.4"/></svg><span>Аккаунт</span></button>
+  </nav>
 
   <div class="done" id="done" aria-hidden="true"><svg viewBox="0 0 52 52"><circle class="dc" cx="26" cy="26" r="24"/><path class="dk" d="M15.5 27l7 7 14-15"/></svg><span id="doneTxt">Добавлено</span></div>
   <p class="sr" id="doneSr" role="status"></p>
@@ -526,9 +680,10 @@ details summary{color:var(--fg);font-size:.92rem}
     </div>
   </div>
 
-  <p class="foot">Значения продуктов средние, на 100 г; блюда «Вкусно и точка» считаются на штуку или порцию, в разных ресторанах цифры могут отличаться на 5–10%. Для протеина, батончика и белкового молока сверься с этикеткой и при желании добавь их как свой продукт. Данные хранятся только на этом устройстве.</p>
+  <p class="foot">Значения продуктов средние, на 100 г; блюда «Вкусно и точка» считаются на штуку или порцию, в разных ресторанах цифры могут отличаться на 5–10%. Для протеина, батончика и белкового молока сверься с этикеткой и при желании добавь их как свой продукт. </p>
 </div>
 
+<script src="firebase-config.js"></script>
 <script>
 // Values per 100 g. u = one piece/portion in grams. per:true = values are for 1 piece/portion (fast food).
 const CATS = ["Мясо и птица","Колбасы и копчёности","Рыба","Готовые блюда и полуфабрикаты","Молочное и сыр","Яйца","Крупы, гарниры, хлеб","Овощи, фрукты, соления","Спортпит","Вкусно и точка","Сладкое, масло, напитки","Ермолино","Бутерброды","Бургер Кинг"];
@@ -705,7 +860,7 @@ const QUICK = [["whey",1],["hpmilk",1],["egg",2],["prost2",1]];
 
 const S = {
   get(k,d){try{const v=localStorage.getItem("bzhu_"+k);return v?JSON.parse(v):d}catch(e){return d}},
-  set(k,v){try{localStorage.setItem("bzhu_"+k,JSON.stringify(v))}catch(e){}}
+  set(k,v){try{localStorage.setItem("bzhu_"+k,JSON.stringify(v))}catch(e){} if(window.Sync) Sync.touch(k);}
 };
 const todayKey = new Date().toLocaleDateString("sv-SE");
 const DEF = {sex:"m",age:24,h:185,w:80,act:"1.45",goal:"recomp"};
@@ -729,6 +884,7 @@ function goDate(key){
 let editIx=-1;
 function saveDays(){
   for(const k of Object.keys(days)) if(k!==cur && !(days[k].items||[]).length) delete days[k];
+  if(window.Sync) Sync.diffDays();
   S.set("days",days);
 }
 
@@ -1178,7 +1334,7 @@ document.getElementById("nextDay").addEventListener("click",()=>goDay(1));
 // backup
 const msg=t=>document.getElementById("backupMsg").textContent=t;
 document.getElementById("exportBtn").addEventListener("click",()=>{
-  const data={app:"bzhu",v:1,exported:new Date().toISOString(),settings,custom,days,uover};
+  const data={app:"bzhu",v:2,exported:new Date().toISOString(),settings,custom,days,uover,body};
   const blob=new Blob([JSON.stringify(data,null,1)],{type:"application/json"});
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="bzhu-backup-"+todayKey+".json";
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
@@ -1195,6 +1351,7 @@ document.getElementById("importFile").addEventListener("change",e=>{
       settings=Object.assign({},DEF,d.settings||{}); custom=Array.isArray(d.custom)?d.custom:[];
       days=Object.assign({},days,d.days); diary=days[cur]||(days[cur]={items:[]});
       if(d.uover){ uover=d.uover; S.set("uover",uover); applyOverrides(); }
+      if(d.body){ body=Object.assign({},body,d.body); S.set("body",body); }
       S.set("settings",settings); S.set("custom",custom);
       for(const id of ["sex","age","h","w","act","goal"]) document.getElementById(id).value=settings[id];
       fillProducts(); render(); renderMyList(); msg("Данные загружены.");
@@ -1325,7 +1482,259 @@ async function lookup(code){
 // iOS Safari ignores user-scalable=no for pinch: block zoom gestures explicitly
 ["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 document.addEventListener("touchmove",e=>{ if(e.touches&&e.touches.length>1) e.preventDefault(); },{passive:false});
+
+// ================= v2: tabs, progress, stats, account =================
+let body=S.get("body",{});
+const fmt1=x=>(Math.round(x*10)/10).toLocaleString("ru-RU",{maximumFractionDigits:1});
+const keyToDate=k=>{const [y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d);};
+const shortDate=k=>keyToDate(k).toLocaleDateString("ru-RU",{day:"numeric",month:"short"}).replace(".","");
+const TITLES={diary:"Дневник БЖУ",progress:"Прогресс",stats:"Статистика",account:"Аккаунт"};
+let curTab="diary";
+function showTab(t){
+  curTab=t;
+  document.querySelectorAll(".tabpane").forEach(p=>p.hidden = p.id!=="tab-"+t);
+  document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  document.getElementById("pageTitle").textContent=TITLES[t];
+  if(t==="progress") renderProgress();
+  if(t==="stats") renderStats();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll(".tabbar button").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+function segBind(id,fn){ const el=document.getElementById(id); el.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; el.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); fn(b); }); }
+
+// ---------- chart helpers (SVG, one scale per chart)
+function niceTicks(lo,hi,n){ const span=hi-lo||1, step0=span/n, mag=Math.pow(10,Math.floor(Math.log10(step0))); const step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=step0); const a=Math.floor(lo/step)*step, b=Math.ceil(hi/step)*step; const t=[]; for(let v=a; v<=b+1e-9; v+=step) t.push(+v.toFixed(6)); return t; }
+function lineChart(pts,color,unit){
+  if(pts.length<2) return `<div class="chartempty">${pts.length? "Нужно хотя бы 2 замера, чтобы построить график" : "Пока нет замеров за этот период"}</div>`;
+  const W=340,H=190,L=34,R=14,T=14,B=26;
+  const xs=pts.map(p=>keyToDate(p.k).getTime()), ys=pts.map(p=>p.v);
+  let lo=Math.min(...ys), hi=Math.max(...ys); const pad=Math.max(.3,(hi-lo)*.15); lo-=pad; hi+=pad;
+  const ticks=niceTicks(lo,hi,4); lo=ticks[0]; hi=ticks[ticks.length-1];
+  const x0=Math.min(...xs), x1=Math.max(...xs);
+  const X=t=>L+(x1===x0?0.5:(t-x0)/(x1-x0))*(W-L-R), Y=v=>T+(1-(v-lo)/(hi-lo))*(H-T-B);
+  let g=ticks.map(v=>`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${L-6}" y="${Y(v)+3.5}" text-anchor="end">${fmt1(v)}</text>`).join("");
+  const xl=[0,Math.floor((pts.length-1)/2),pts.length-1].filter((v,i,a)=>a.indexOf(v)===i);
+  g+=xl.map(i=>`<text class="ax" x="${X(xs[i])}" y="${H-8}" text-anchor="${i===0?"start":i===pts.length-1?"end":"middle"}">${shortDate(pts[i].k)}</text>`).join("");
+  const path=pts.map((p,i)=>(i?"L":"M")+X(xs[i]).toFixed(1)+" "+Y(p.v).toFixed(1)).join(" ");
+  const area=path+` L${X(xs[xs.length-1]).toFixed(1)} ${H-B} L${X(xs[0]).toFixed(1)} ${H-B} Z`;
+  // 7-point moving average as a smooth trend
+  const ma=pts.map((p,i)=>{ const w=pts.slice(Math.max(0,i-3),i+4); return w.reduce((a,b)=>a+b.v,0)/w.length; });
+  const trend=pts.length>=6 ? `<path d="${ma.map((v,i)=>(i?"L":"M")+X(xs[i]).toFixed(1)+" "+Y(v).toFixed(1)).join(" ")}" fill="none" stroke="${color}" stroke-opacity=".35" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>` : "";
+  const last=pts[pts.length-1], lx=X(xs[xs.length-1]), ly=Y(last.v);
+  const dots=pts.length<=40 ? pts.map((p,i)=>`<circle cx="${X(xs[i])}" cy="${Y(p.v)}" r="2.2" fill="${color}"/>`).join("") : "";
+  const gid="g"+Math.random().toString(36).slice(2,7);
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="График, последнее значение ${fmt1(last.v)} ${unit}">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".28"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    ${g}<path d="${area}" fill="url(#${gid})"/>${trend}<path d="${path}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}
+    <circle cx="${lx}" cy="${ly}" r="5.5" fill="${color}" stroke="#151b25" stroke-width="2.5"/>
+  </svg>`;
+}
+function barChart(rows,target){
+  const W=340,H=180,L=34,R=8,T=12,B=24;
+  const max=Math.max(target*1.25,...rows.map(r=>r.v),100);
+  const ticks=niceTicks(0,max,4), hi=ticks[ticks.length-1];
+  const Y=v=>T+(1-v/hi)*(H-T-B), bw=(W-L-R)/rows.length, gap=Math.min(6,bw*.28);
+  let g=ticks.map(v=>`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${L-6}" y="${Y(v)+3.5}" text-anchor="end">${v>=1000?(v/1000).toLocaleString("ru-RU")+"k":v}</text>`).join("");
+  g+=rows.map((r,i)=>{ const x=L+i*bw+gap/2, w=bw-gap, h=Math.max(r.v?2:0,(H-B)-Y(r.v));
+    const c=!r.v?"transparent":r.v>target*1.1?"var(--warn)":r.v<target*.9?"#4b5568":"var(--carb)";
+    const showLbl=rows.length<=7 || i%5===0 || i===rows.length-1;
+    return `<rect x="${x}" y="${(H-B)-h}" width="${w}" height="${h}" rx="${Math.min(4,w/2)}" fill="${c}"/>${showLbl?`<text class="ax" x="${x+w/2}" y="${H-8}" text-anchor="middle">${r.lbl}</text>`:""}`; }).join("");
+  g+=`<line x1="${L}" x2="${W-R}" y1="${Y(target)}" y2="${Y(target)}" stroke="var(--fg)" stroke-opacity=".55" stroke-dasharray="4 4"/><text class="ax" x="${W-R}" y="${Y(target)-5}" text-anchor="end">цель ${target}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Калории по дням">${g}</svg>`;
+}
+
+// ---------- progress
+let pcMetric="w", pcRange=30;
+function bodyKeys(){ return Object.keys(body).sort(); }
+function renderProgress(){
+  const dk=document.getElementById("bmDate"); if(!dk.value) dk.value=todayKey; dk.max=todayKey;
+  document.getElementById("bmDateLbl").textContent = dk.value===todayKey ? "Сегодня" : shortDate(dk.value);
+  const e=body[dk.value]||{};
+  if(document.activeElement!==document.getElementById("bmW")) document.getElementById("bmW").value=e.w??"";
+  if(document.activeElement!==document.getElementById("bmWaist")) document.getElementById("bmWaist").value=e.waist??"";
+  const unit=pcMetric==="w"?"кг":"см", color=pcMetric==="w"?"var(--prot)":"var(--fat)";
+  const all=bodyKeys().filter(k=>body[k][pcMetric]!=null).map(k=>({k,v:+body[k][pcMetric]}));
+  const from = pcRange ? shiftDay(todayKey,-(pcRange-1)) : "0000";
+  const pts=all.filter(p=>p.k>=from);
+  document.getElementById("pcChart").innerHTML=lineChart(pts,color==="var(--prot)"?"#6e96ff":"#f2bf5a",unit);
+  const k=document.getElementById("pcKpis");
+  if(!pts.length){ k.innerHTML=""; document.getElementById("pcHint").textContent=""; }
+  else{
+    const first=pts[0].v,last=pts[pts.length-1].v,d=last-first,mn=Math.min(...pts.map(p=>p.v));
+    const better = d<0 ? "good" : d>0 ? (pcMetric==="w"&&settings.goal==="gain"?"good":"bad") : "neutral";
+    k.innerHTML=`<div class="kpi"><span class="label">Сейчас</span><b class="num">${fmt1(last)}<small>${unit}</small></b></div>
+      <div class="kpi"><span class="label">Изменение</span><b class="num ${better}">${d>0?"+":d<0?"−":""}${fmt1(Math.abs(d))}<small>${unit}</small></b></div>
+      <div class="kpi"><span class="label">Минимум</span><b class="num">${fmt1(mn)}<small>${unit}</small></b></div>`;
+    let hint="";
+    if(pcMetric==="waist"&&pts.length>=2) hint = d<0 ? `Талия уменьшилась на ${fmt1(-d)} см — жир уходит.` : d>0 ? `Талия выросла на ${fmt1(d)} см. Если цель — рекомпозиция или похудение, проверь калории.` : "Талия держится на месте.";
+    else if(pcMetric==="w"&&pts.length>=2){ const days=(keyToDate(pts[pts.length-1].k)-keyToDate(pts[0].k))/864e5; const wk=days>0?d/days*7:0;
+      hint = `Темп: ${wk>0?"+":wk<0?"−":""}${fmt1(Math.abs(wk))} кг в неделю. Широкая полупрозрачная линия — среднее за неделю, на неё смотри больше, чем на отдельные дни.`; }
+    document.getElementById("pcHint").textContent=hint;
+  }
+  const keys=bodyKeys().reverse();
+  document.getElementById("bmList").innerHTML = keys.length ? keys.slice(0,30).map(k=>`<div class="bmrow"><span class="dt">${k===todayKey?"Сегодня":keyToDate(k).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}</span><span class="vals num">${body[k].w!=null?`<span>${fmt1(body[k].w)} кг</span>`:""}${body[k].waist!=null?`<span class="neutral">${fmt1(body[k].waist)} см</span>`:""}</span><button class="del" type="button" data-bmdel="${k}" aria-label="Удалить замер">×</button></div>`).join("")
+    : `<p class="empty">Здесь появятся твои замеры.</p>`;
+}
+document.getElementById("bmDate").addEventListener("change",renderProgress);
+document.getElementById("bmSave").addEventListener("click",()=>{
+  const k=document.getElementById("bmDate").value||todayKey, w=parseFloat(document.getElementById("bmW").value), wa=parseFloat(document.getElementById("bmWaist").value);
+  if(!(w>0)&&!(wa>0)) return;
+  body[k]=Object.assign({},body[k]); if(w>0) body[k].w=w; else delete body[k].w; if(wa>0) body[k].waist=wa; else delete body[k].waist;
+  S.set("body",body);
+  if(k===todayKey && w>0 && Math.abs(w-(+settings.w))>=0.1){ settings.w=String(w); S.set("settings",settings); document.getElementById("w").value=settings.w; render(); }
+  document.activeElement.blur(); renderProgress(); done("Сохранено");
+});
+document.getElementById("bmList").addEventListener("click",e=>{
+  const b=e.target.closest("[data-bmdel]"); if(!b) return; const k=b.dataset.bmdel;
+  openModal("Удалить замер?",`<p>Замер за ${esc(keyToDate(k).toLocaleDateString("ru-RU",{day:"numeric",month:"long"}))} будет удалён.</p>`,[{label:"Отмена"},{label:"Удалить",cls:"danger",fn:()=>{ delete body[k]; S.set("body",body); renderProgress(); }}]);
+});
+segBind("pcMetric",b=>{ pcMetric=b.dataset.m; renderProgress(); });
+segBind("pcRange",b=>{ pcRange=+b.dataset.r; renderProgress(); });
+
+// ---------- stats
+let stRange=7;
+function renderStats(){
+  const n=norm(), keys=[]; for(let i=stRange-1;i>=0;i--) keys.push(shiftDay(todayKey,-i));
+  const rows=keys.map(k=>{ const it=(days[k]&&days[k].items)||[]; const t=it.reduce((a,i)=>({k:a.k+i.k,p:a.p+i.p,f:a.f+i.f,c:a.c+i.c}),{k:0,p:0,f:0,c:0}); return {k,t,n:it.length}; });
+  const logged=rows.filter(r=>r.n), cnt=logged.length||1;
+  const avg=f=>logged.reduce((a,r)=>a+r.t[f],0)/cnt;
+  const inNorm=logged.filter(r=>Math.abs(r.t.k-n.k)<=n.k*.1 && r.t.p>=n.p*.9).length;
+  const pDays=logged.filter(r=>r.t.p>=n.p*.9).length;
+  const ak=avg("k"), ap=avg("p"), dk=ak-n.k;
+  document.getElementById("stTiles").innerHTML = !logged.length ? `<div class="chartempty" style="grid-column:1/-1">За этот период записей нет</div>` : `
+    <div class="tile"><span class="label">Ккал в среднем</span><b class="num">${r(ak)}</b><span class="s ${Math.abs(dk)<=n.k*.1?"good":dk>0?"bad":""}">${Math.abs(dk)<=n.k*.1?"в норме":dk>0?"+"+r(dk)+" к цели":"−"+r(-dk)+" от цели"}</span></div>
+    <div class="tile"><span class="label">Белок в среднем</span><b class="num">${r(ap)}<small>г</small></b><span class="s ${ap>=n.p*.9?"good":""}">цель ${n.p} г</span></div>
+    <div class="tile"><span class="label">Дней в норме</span><b class="num">${inNorm}<small>из ${logged.length}</small></b><span class="s">калории ±10% и белок</span></div>
+    <div class="tile"><span class="label">Белок набран</span><b class="num">${pDays}<small>из ${logged.length}</small></b><span class="s">дней записано ${logged.length} из ${stRange}</span></div>`;
+  const wd=["вс","пн","вт","ср","чт","пт","сб"];
+  document.getElementById("stChart").innerHTML = logged.length ? barChart(rows.map(r=>({v:r.t.k,lbl:stRange<=7?wd[keyToDate(r.k).getDay()]:String(keyToDate(r.k).getDate())})),n.k) : `<div class="chartempty">Нет данных</div>`;
+  const pk=avg("p")*4, fk=avg("f")*9, ck=avg("c")*4, tot=pk+fk+ck||1;
+  const pp=pk/tot*100, fp=fk/tot*100, cp=ck/tot*100;
+  document.getElementById("stSplit").innerHTML = logged.length ? `<i style="width:${pp}%;background:var(--prot)"></i><i style="width:${fp}%;background:var(--fat)"></i><i style="width:${cp}%;background:var(--carb)"></i>` : "";
+  document.getElementById("stSplitLeg").innerHTML = logged.length ? `<div><span><span class="dot" style="background:var(--prot)"></span>Белки</span><b class="num">${r(pp)}%</b></div><div><span><span class="dot" style="background:var(--fat)"></span>Жиры</span><b class="num">${r(fp)}%</b></div><div><span><span class="dot" style="background:var(--carb)"></span>Углеводы</span><b class="num">${r(cp)}%</b></div>` : "";
+  document.getElementById("stSplitHint").textContent = !logged.length ? "" : fp>40 ? "Больше 40% калорий из жиров. Для твоей цели лучше держать 25–35%." : pp<20 ? "Белка меньше 20% калорий. Добавь мясо, птицу, творог или протеин." : "Хороший баланс: белка достаточно, жиры в норме.";
+  const cntMap={}; logged.forEach(r=>(days[r.k].items||[]).forEach(i=>{ const m=cntMap[i.n]||(cntMap[i.n]={n:i.n,c:0,k:0}); m.c++; m.k+=i.k; }));
+  const top=Object.values(cntMap).sort((a,b)=>b.c-a.c||b.k-a.k).slice(0,5);
+  document.getElementById("stTop").innerHTML = top.length ? top.map(t=>`<div class="toprow"><span>${esc(t.n)}</span><small class="num">${t.c} ${plural(t.c,"раз","раза","раз")} · ${r(t.k)} ккал</small></div>`).join("") : `<p class="empty">Пока пусто</p>`;
+}
+segBind("stRange",b=>{ stRange=+b.dataset.r; renderStats(); });
+
+// ---------- синхронизация (Firebase: Auth + Firestore), local-first
+// Данные всегда пишутся в телефон; облако догоняет. Каждый день и блок настроек хранит время изменения u,
+// при слиянии побеждает более свежая версия.
+window.Sync=(function(){
+  const CFG=window.FIREBASE_CONFIG||null;
+  const st=S.get("sync",{days:{},meta:{},dirtyDays:[],dirtyMeta:false,last:0});
+  let snap=S.get("syncSnap",null); // JSON-слепки дней для поиска изменений
+  let fb=null, auth=null, db=null, user=null, busy=false, timer=null, state="off", lastErr="";
+  const META_KEYS=["settings","custom","uover","body"];
+  const save=()=>{ try{ localStorage.setItem("bzhu_sync",JSON.stringify(st)); }catch(e){} };
+  const now=()=>Date.now();
+  function diffDays(){
+    const cur={}; for(const k in days) cur[k]=JSON.stringify((days[k]&&days[k].items)||[]);
+    if(!snap){ snap=cur; try{localStorage.setItem("bzhu_syncSnap",JSON.stringify(snap));}catch(e){} return; }
+    let ch=false;
+    const keys=new Set([...Object.keys(cur),...Object.keys(snap)]);
+    keys.forEach(k=>{ const a=cur[k]||"[]", b=snap[k]||"[]"; if(a!==b){ st.days[k]=now(); if(!st.dirtyDays.includes(k)) st.dirtyDays.push(k); ch=true; } });
+    if(ch){ snap=cur; try{localStorage.setItem("bzhu_syncSnap",JSON.stringify(snap));}catch(e){} save(); schedule(); }
+  }
+  function touch(k){ if(!META_KEYS.includes(k)) return; st.meta[k]=now(); st.dirtyMeta=true; save(); schedule(); }
+  function schedule(){ if(!user) return; clearTimeout(timer); timer=setTimeout(push,1500); }
+  function setState(s,err){ state=s; lastErr=err||""; ui(); }
+  function load(src){ if(window.FB_PRELOADED) return Promise.resolve(); return new Promise((ok,bad)=>{ const e=document.createElement("script"); e.src=src; e.onload=ok; e.onerror=()=>bad(new Error("load "+src)); document.head.appendChild(e); }); }
+  async function init(){
+    ui(); if(!CFG) return;
+    try{
+      await load("firebase-app-compat.js"); await load("firebase-auth-compat.js"); await load("firebase-firestore-compat.js");
+      fb=firebase.initializeApp(CFG); auth=firebase.auth(); db=firebase.firestore();
+      auth.onAuthStateChanged(u=>{ user=u; ui(); if(u) pull(true); });
+      document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&user) pull(false); });
+      window.addEventListener("online",()=>{ if(user) push(); });
+    }catch(e){ setState("err","Не удалось загрузить модуль синхронизации. Проверь интернет."); }
+  }
+  const uref=()=>db.collection("users").doc(user.uid);
+  async function pull(first){
+    if(!user||busy) return; busy=true; setState("busy");
+    try{
+      const metaDoc=await uref().collection("meta").doc("state").get();
+      const m=metaDoc.exists?metaDoc.data():{};
+      let changed=false;
+      META_KEYS.forEach(k=>{ const rv=m[k], ru=(m.u&&m.u[k])||0, lu=st.meta[k]||0;
+        if(rv!==undefined && ru>lu){ applyMeta(k,rv); st.meta[k]=ru; changed=true; }
+        else if(lu>ru || (rv===undefined && lu===0 && first)) { st.dirtyMeta=true; } });
+      let q=uref().collection("days"); if(!first && st.last) q=q.where("u",">",st.last-60000);
+      const ds=await q.get(); const remote=new Set();
+      ds.forEach(d=>{ const k=d.id, v=d.data(), ru=v.u||0, lu=st.days[k]||0; remote.add(k);
+        if(ru>lu){ if((v.items||[]).length) days[k]={items:v.items}; else if(k!==cur) delete days[k]; else days[k]={items:[]};
+          st.days[k]=ru; changed=true; } });
+      if(first) Object.keys(days).forEach(k=>{ if((days[k].items||[]).length && !remote.has(k) && !st.dirtyDays.includes(k)){ st.dirtyDays.push(k); if(!st.days[k]) st.days[k]=now(); } });
+      if(changed){
+        snap=null; diffDaysSilent(); S_raw("days",days);
+        diary=days[cur]||(days[cur]={items:[]});
+        applyOverrides(); for(const id of ["sex","age","h","w","act","goal"]) document.getElementById(id).value=settings[id];
+        fillProducts(document.getElementById("prod").value); render(); renderMyList();
+        if(curTab==="progress") renderProgress(); if(curTab==="stats") renderStats();
+      }
+      st.last=now(); save(); busy=false;
+      await push(); setState("ok");
+    }catch(e){ busy=false; setState("err",netMsg(e)); }
+  }
+  function diffDaysSilent(){ const c={}; for(const k in days) c[k]=JSON.stringify((days[k]&&days[k].items)||[]); snap=c; try{localStorage.setItem("bzhu_syncSnap",JSON.stringify(snap));}catch(e){} }
+  function S_raw(k,v){ try{localStorage.setItem("bzhu_"+k,JSON.stringify(v))}catch(e){} }
+  function applyMeta(k,v){
+    if(k==="settings"){ settings=Object.assign({},DEF,v); S_raw("settings",settings); }
+    if(k==="custom"){ custom=Array.isArray(v)?v:[]; S_raw("custom",custom); }
+    if(k==="uover"){ uover=v||{}; S_raw("uover",uover); }
+    if(k==="body"){ body=v||{}; S_raw("body",body); }
+  }
+  async function push(){
+    if(!user||busy) return; if(!st.dirtyDays.length && !st.dirtyMeta){ setState("ok"); return; }
+    busy=true; setState("busy");
+    try{
+      const batch=db.batch();
+      const list=st.dirtyDays.slice(0,400);
+      list.forEach(k=>{ batch.set(uref().collection("days").doc(k),{items:JSON.parse(JSON.stringify((days[k]&&days[k].items)||[])),u:st.days[k]||now()}); });
+      if(st.dirtyMeta){ const u={}; META_KEYS.forEach(k=>u[k]=st.meta[k]||0);
+        batch.set(uref().collection("meta").doc("state"),JSON.parse(JSON.stringify({settings,custom,uover,body,u}))); }
+      await batch.commit();
+      st.dirtyDays=st.dirtyDays.filter(k=>!list.includes(k)); st.dirtyMeta=false; st.last=now(); save(); busy=false;
+      if(st.dirtyDays.length) return push();
+      setState("ok");
+    }catch(e){ busy=false; setState("err",netMsg(e)); }
+  }
+  function netMsg(e){ const c=(e&&e.code)||""; if(!navigator.onLine||c==="unavailable") return "Нет связи с сервером. Изменения сохранены на телефоне и отправятся позже.";
+    if(c==="permission-denied") return "Сервер отказал в доступе. Проверь правила базы данных.";
+    return "Не получилось синхронизировать. Попробуй ещё раз чуть позже."; }
+  function authErr(e){ const c=(e&&e.code)||"";
+    return ({"auth/invalid-email":"Похоже, в почте ошибка.","auth/user-not-found":"Аккаунта с такой почтой нет. Нажми «Создать аккаунт».","auth/wrong-password":"Неверный пароль.","auth/invalid-credential":"Неверная почта или пароль.","auth/email-already-in-use":"Такой аккаунт уже есть. Нажми «Войти».","auth/weak-password":"Пароль слишком простой: нужно хотя бы 8 символов.","auth/too-many-requests":"Слишком много попыток. Подожди пару минут.","auth/network-request-failed":"Нет связи с сервером. Проверь интернет."})[c] || "Не получилось. Попробуй ещё раз."; }
+  const $=id=>document.getElementById(id);
+  function ui(){
+    const pill=$("syncPill"); if(!pill) return;
+    const logged=!!user;
+    $("authForm").hidden=logged||!CFG; $("auIntro").hidden=logged; $("auMe").hidden=!logged; $("auActs").hidden=!logged;
+    if(!CFG){ pill.className="pill off"; pill.textContent="Не настроена"; $("auMsg").textContent="Сервер синхронизации ещё не подключён. Пока пользуйся резервной копией ниже."; return; }
+    if(logged){ $("auWho").textContent=user.email; $("auAva").textContent=(user.email||"?")[0];
+      $("auLast").textContent = st.last ? "Синхронизировано "+new Date(st.last).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) : "Ещё не синхронизировано"; }
+    const map={off:["off","Выключена"],busy:["busy","Синхронизация…"],ok:["on","Включена"],err:["err","Ошибка"]};
+    const [c,t]= logged ? map[state]||map.ok : map.off; pill.className="pill "+c; pill.textContent=t;
+    if(logged) $("auMsg").textContent = state==="err" ? lastErr : "";
+  }
+  function creds(){ const e=$("auEmail").value.trim(), p=$("auPass").value; if(!e||!p){ $("auMsg").textContent="Введи почту и пароль."; return null; } return [e,p]; }
+  $("authForm").addEventListener("submit",async ev=>{ ev.preventDefault(); if(!auth) return; const c=creds(); if(!c) return;
+    $("auMsg").textContent="Вхожу…"; try{ await auth.signInWithEmailAndPassword(c[0],c[1]); $("auPass").value=""; $("auMsg").textContent=""; done("Вход выполнен"); }catch(e){ $("auMsg").textContent=authErr(e); } });
+  $("auReg").addEventListener("click",async()=>{ if(!auth) return; const c=creds(); if(!c) return;
+    if(c[1].length<8){ $("auMsg").textContent="Пароль слишком простой: нужно хотя бы 8 символов."; return; }
+    $("auMsg").textContent="Создаю аккаунт…"; try{ await auth.createUserWithEmailAndPassword(c[0],c[1]); $("auPass").value=""; $("auMsg").textContent=""; done("Аккаунт создан"); }catch(e){ $("auMsg").textContent=authErr(e); } });
+  $("auForgot").addEventListener("click",async()=>{ if(!auth) return; const e=$("auEmail").value.trim(); if(!e){ $("auMsg").textContent="Впиши почту, и я пришлю ссылку для нового пароля."; return; }
+    try{ auth.languageCode="ru"; await auth.sendPasswordResetEmail(e); $("auMsg").textContent="Письмо со ссылкой отправлено на "+e+". Проверь и папку «Спам»."; }catch(err){ $("auMsg").textContent=authErr(err); } });
+  $("auSync").addEventListener("click",()=>pull(false));
+  $("auOut").addEventListener("click",()=>openModal("Выйти из аккаунта?","<p>Данные останутся на этом телефоне. Новые изменения перестанут сохраняться на сервере, пока ты снова не войдёшь.</p>",[{label:"Отмена"},{label:"Выйти",cls:"danger",fn:async()=>{ await auth.signOut(); setState("off"); }}]));
+  return {init,touch,diffDays,pull};
+})();
+
+Sync.diffDays(); Sync.init();
 fillProducts(); render(); renderMyList();
+if(typeof DEMO!=="undefined"&&DEMO) seedDemo();
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
 </script>
 </body>
