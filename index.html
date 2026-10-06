@@ -185,6 +185,8 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .coll-head[aria-expanded="true"] .chev{transform:rotate(90deg)}
 .coll-body{display:flex;flex-direction:column;gap:14px;padding-top:14px}
 .coll-body>.btn{align-self:flex-start}
+.addplus{flex:none;width:30px;height:30px;border-radius:10px;background:var(--prot);color:#0b1020;display:flex;align-items:center;justify-content:center;transition:transform .2s ease}
+.addp .coll-head[aria-expanded="true"] .addplus{transform:rotate(45deg);background:var(--surface2);color:var(--muted)}
 
 /* success check */
 .done{position:fixed;left:50%;top:42%;z-index:95;width:112px;height:112px;margin:-56px 0 0 -56px;border-radius:26px;background:color-mix(in srgb,var(--surface) 82%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 10px 40px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;pointer-events:none;opacity:0}
@@ -217,6 +219,15 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .norm-out{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .norm-out div{background:var(--chip);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .norm-out b{font-size:1.1rem}
+.ncust{display:flex;flex-direction:column;gap:10px;background:var(--surface2);border-radius:14px;padding:12px}
+.ncust-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nmode{font-size:.72rem;font-weight:600;color:var(--muted);background:var(--chip);border-radius:6px;padding:2px 8px}
+.nmode.own{color:var(--fat);background:rgba(242,191,90,.12)}
+.ncust-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ncust-grid label{font-size:.72rem}
+.ncust-grid input{font-family:var(--font-display);font-weight:600}
+.ncust .linkbtn{align-self:flex-start}
+@media (min-width:560px){.ncust-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 details summary{cursor:pointer;font-weight:600;font-size:.92rem}
 details[open] summary{margin-bottom:12px}
 .foot{font-size:.8rem;color:var(--muted);margin:0}
@@ -564,8 +575,9 @@ body.onb-on::before{display:none}
   </section>
 
   <!-- add -->
-  <section class="panel" aria-labelledby="a-h">
-    <h2 id="a-h">Добавить еду</h2>
+  <section class="panel coll addp" id="addPanel" aria-labelledby="a-h">
+    <button class="coll-head" type="button" aria-expanded="false" aria-controls="addBody"><svg class="chev" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M4 2.5 8.5 6 4 9.5Z" fill="currentColor"/></svg><h2 id="a-h">Добавить еду</h2><span class="addplus" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span></button>
+    <div class="coll-body" id="addBody" hidden>
     <div class="label">Быстро</div>
     <div class="chips" id="quick"></div>
     <div class="field search">
@@ -621,6 +633,7 @@ body.onb-on::before{display:none}
         </div>
       </form>
     </details>
+    </div>
   </section>
 
   <!-- eaten -->
@@ -648,6 +661,18 @@ body.onb-on::before{display:none}
     <p class="hint">Формула Миффлина — Сан Жеора. Белок 2 г на кг веса, жиры 1 г на кг, остальное углеводы.</p>
     <div class="norm-out num" id="normOut"></div>
     <p class="hint" id="normHint"></p>
+    <div class="ncust">
+      <div class="ncust-head"><span class="label">Норма на день</span><span class="nmode" id="nMode">по формуле</span></div>
+      <div class="ncust-grid">
+        <div class="field"><label for="nK">Ккал</label><input id="nK" type="number" inputmode="numeric" min="800" max="9000" step="10"></div>
+        <div class="field"><label for="nP">Белки, г</label><input id="nP" type="number" inputmode="numeric" min="0" max="600"></div>
+        <div class="field"><label for="nF">Жиры, г</label><input id="nF" type="number" inputmode="numeric" min="0" max="400"></div>
+        <div class="field"><label for="nC">Углеводы, г</label><input id="nC" type="number" inputmode="numeric" min="0" max="1500"></div>
+      </div>
+      <p class="hint">Цифры посчитаны по формуле для твоей цели, но их можно поменять под себя. Меняешь калории — подстроятся углеводы. Меняешь белки, жиры или углеводы — пересчитаются калории (белки и углеводы по 4 ккал на грамм, жиры 9).</p>
+      <p class="lg-warn" id="nWarn" hidden></p>
+      <button type="button" class="linkbtn" id="nReset" hidden>Вернуть расчёт по формуле</button>
+    </div>
     <div class="grid2">
       <div class="field"><label for="sex">Пол</label><select id="sex"><option value="" disabled>Не указан</option><option value="m">Мужской</option><option value="f">Женский</option></select></div>
       <div class="field"><label for="age">Возраст</label><input id="age" type="number" min="14" max="90"></div>
@@ -1256,7 +1281,7 @@ function mk(id,amt,mode){
 }
 const r=x=>Math.round(x), r1=x=>Math.round(x*10)/10;
 
-function norm(){
+function normAuto(){
   if(!profileOK()) return null;
   const s=settings, w=+s.w||0;
   const bmr=10*w+6.25*(+s.h||0)-5*(+s.age||0)+(s.sex==="m"?5:-161);
@@ -1267,26 +1292,44 @@ function norm(){
   const p=r(2*w), f=r(1*w), c=Math.max(0,r((k-p*4-f*9)/4));
   return {k,p,f,c,bmr:r(bmr),tdee:Math.round(tdee/10)*10};
 }
+// своя норма: settings.cust = {k,p,f,c}; без анкеты тоже работает
+const custOK=c=>c && c.k>=800 && c.k<=9000 && c.p>=0 && c.f>=0 && c.c>=0;
+function norm(){
+  const a=normAuto(), c=settings.cust;
+  if(custOK(c)) return {k:c.k,p:c.p,f:c.f,c:c.c,bmr:a?a.bmr:0,tdee:a?a.tdee:0,manual:true,auto:a};
+  return a;
+}
 
+function fillCust(n){
+  const a=document.activeElement;
+  [["nK","k"],["nP","p"],["nF","f"],["nC","c"]].forEach(([id,k])=>{ const el=document.getElementById(id); if(el!==a) el.value = n ? n[k] : ""; });
+  const man=!!(n&&n.manual);
+  const m=document.getElementById("nMode"); m.textContent = man ? "своя" : "по формуле"; m.classList.toggle("own",man);
+  document.getElementById("nReset").hidden=!man || !normAuto();
+}
 function renderNorm(){
-  const n=norm();
+  const n=norm(); fillCust(n);
   if(!n){
+    document.getElementById("normOut").hidden=false;
     document.getElementById("normOut").innerHTML=`<div style="grid-column:1/-1"><span class="label">Норма не рассчитана</span><b style="font-size:.9rem;font-weight:500">Заполни пол, возраст, рост и вес ниже</b></div>`;
     document.getElementById("normSum").textContent="не заполнено"; document.getElementById("normHint").textContent=""; return null;
   }
+  document.getElementById("normOut").hidden=true;
   document.getElementById("normOut").innerHTML=
     `<div><span class="label">Ккал</span><b>${n.k}</b></div>
      <div><span class="label">Белки</span><b>${n.p} г</b></div>
      <div><span class="label">Жиры</span><b>${n.f} г</b></div>
      <div><span class="label">Углеводы</span><b>${n.c} г</b></div>`;
   const gl={recomp:"рекомпозиция",gain:"набор",cut:"сушка",lose:"похудение"}[settings.goal]||"";
-  document.getElementById("normSum").textContent=`${n.k} ккал`;
+  document.getElementById("normSum").textContent=`${n.k} ккал${n.manual?" · своя":""}`;
+  if(n.manual && !n.tdee){ document.getElementById("normHint").textContent="Своя норма. Чтобы сравнить её с расчётом и увидеть дефицит или профицит, заполни пол, возраст, рост и вес ниже."; return n; }
   const diff=n.k-n.tdee, wk=Math.abs(diff)*7/7700;
   const fmt=x=>x.toLocaleString("ru-RU",{maximumFractionDigits:1});
   document.getElementById("normHint").textContent =
     diff<0 ? `Поддержание веса — около ${n.tdee} ккал. Дефицит ${-diff} ккал в день, это примерно −${fmt(wk)} кг в неделю.`
     : diff>0 ? `Поддержание веса — около ${n.tdee} ккал. Профицит ${diff} ккал в день, это примерно +${fmt(wk)} кг в неделю.`
     : `Поддержание веса — около ${n.tdee} ккал. Вес будет стоять на месте, меняться будет состав тела.`;
+  if(n.manual && n.auto){ const a=n.auto; document.getElementById("normHint").textContent += ` По формуле для твоей цели вышло бы ${a.k} ккал: белки ${a.p} г, жиры ${a.f} г, углеводы ${a.c} г.`; }
   return n;
 }
 
@@ -1303,7 +1346,7 @@ function render(){
   const C=2*Math.PI*52, ring=document.getElementById("kRing"), fr=n.k?Math.min(1,t.k/n.k):0;
   ring.style.strokeDasharray=C; ring.style.strokeDashoffset=C*(1-fr); ring.classList.toggle("over",!noNorm&&left<0);
   const gl={recomp:"Рекомпозиция",gain:"Набор массы",cut:"Сушка",lose:"Похудение"}[settings.goal]||"";
-  document.getElementById("goalPill").textContent=noNorm?"":gl;
+  document.getElementById("goalPill").textContent=noNorm?"":gl+(n0&&n0.manual?" · своя норма":"");
   for(const [key,id] of [["p","p"],["f","f"],["c","c"]]){
     document.getElementById(id+"V").innerHTML= noNorm ? `${r(t[key])} <span>г</span>` : `${r(t[key])} <span>/ ${n[key]} г</span>`;
     document.getElementById(id+"Bar").style.width=pct(t[key],n[key]);
@@ -1314,7 +1357,7 @@ function render(){
     : "Норма белка на сегодня набрана.";
 
   const L=document.getElementById("list");
-  if(!diary.items.length){L.innerHTML=`<p class="empty">Пока пусто. Добавь первый приём пищи выше.</p>`;}
+  if(!diary.items.length){L.innerHTML=`<p class="empty">Пока пусто. <button type="button" class="linkbtn" id="emptyAdd">Добавить первый приём пищи</button></p>`;}
   else L.innerHTML=diary.items.map((i,ix)=>{ const adv=adviceFor(prodOf(i));
     return `
     <div class="item">
@@ -1506,8 +1549,29 @@ document.getElementById("customForm").addEventListener("submit",e=>{
 });
 for(const id of ["sex","age","h","w","act","goal","exp"]){
   const el=document.getElementById(id); el.value=settings[id];
-  el.addEventListener("input",()=>{settings[id]=el.value; S.set("settings",settings); render(); if(typeof renderTrain==="function"&&curTab==="train") renderTrain();});
+  el.addEventListener("input",()=>{
+    if(id==="goal" && settings.cust){ delete settings.cust; done("Норма пересчитана"); } // новая цель — новая норма по формуле
+    settings[id]=el.value; S.set("settings",settings); render(); if(typeof renderTrain==="function"&&curTab==="train") renderTrain();});
 }
+// своя норма
+(function(){
+  const g=id=>document.getElementById(id), warn=g("nWarn");
+  const val=id=>{ const v=parseFloat(g(id).value); return isFinite(v)?Math.round(v):NaN; };
+  function onEdit(src){
+    const base=norm()||{k:0,p:0,f:0,c:0};
+    let k=val("nK"), p=val("nP"), f=val("nF"), c=val("nC");
+    if([k,p,f,c].some(x=>isNaN(x)||x<0)) return; // поле пустое — ждём ввода
+    if(src==="nK"){ c=Math.max(0,Math.round((k-p*4-f*9)/4)); g("nC").value=c; }
+    else { k=Math.round((p*4+f*9+c*4)/10)*10; g("nK").value=k; }
+    const bad = k<800 ? "Меньше 800 ккал в день — слишком мало, такую норму не сохраню." : k>9000 ? "Больше 9000 ккал — похоже на опечатку." : p*4+f*9>k ? "Белки и жиры уже дают больше калорий, чем норма. Уменьши их или увеличь калории." : "";
+    warn.hidden=!bad; warn.textContent=bad;
+    if(bad) return;
+    settings.cust={k,p,f,c}; S.set("settings",settings); render(); if(typeof renderTrain==="function"&&curTab==="train") renderTrain();
+  }
+  ["nK","nP","nF","nC"].forEach(id=>g(id).addEventListener("input",()=>onEdit(id)));
+  ["nK","nP","nF","nC"].forEach(id=>g(id).addEventListener("blur",()=>{ warn.hidden=true; fillCust(norm()); }));
+  g("nReset").addEventListener("click",()=>{ delete settings.cust; S.set("settings",settings); warn.hidden=true; render(); done("Норма по формуле"); });
+})();
 
 // ---------- советы
 const WARN_SVG='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3.5 2.8 19.5h18.4L12 3.5Z" fill="currentColor"/><path d="M12 10v4.2" stroke="var(--surface)" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.9" r="1.1" fill="var(--surface)"/></svg>';
@@ -1651,7 +1715,7 @@ function setCustomEditMode(p){
     set("cName",p.n); set("cK",p.k); set("cP",p.p); set("cF",p.f); set("cC",p.c); set("cCode",p.code||"");
     set("cUn",p.u?p.u.n:""); set("cUg",p.u?p.u.g:"");
     document.getElementById("cSave").textContent="Сохранить изменения"; document.getElementById("cCancel").hidden=false;
-    f.scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("cName").focus();
+    openColl("addPanel"); f.scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("cName").focus();
   } else { delete f.dataset.editId; f.reset(); document.getElementById("cSave").textContent="Сохранить в список"; document.getElementById("cCancel").hidden=true; }
 }
 document.getElementById("cCancel").addEventListener("click",()=>setCustomEditMode(null));
@@ -1688,7 +1752,7 @@ function editPortion(id){
 }
 function savePortion(id){ S.set("uover",uover); applyOverrides(); fillProducts(id); renderMyList(); render(); done("Сохранено"); }
 document.getElementById("unitEdit").addEventListener("click",()=>editPortion(document.getElementById("prod").value));
-document.getElementById("myAdd").addEventListener("click",()=>{ setCustomEditMode(null); const f=document.getElementById("customForm"); f.closest("details").open=true; f.scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("cName").focus(); });
+document.getElementById("myAdd").addEventListener("click",()=>{ setCustomEditMode(null); openColl("addPanel"); const f=document.getElementById("customForm"); f.closest("details").open=true; f.scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("cName").focus(); });
 // ---------- сворачиваемые разделы
 function setColl(panel,open){
   const h=panel.querySelector(".coll-head"), body=panel.querySelector(".coll-body");
@@ -1701,6 +1765,7 @@ document.querySelectorAll(".coll").forEach(pn=>{
   pn.querySelector(".coll-head").addEventListener("click",()=>setColl(pn, pn.querySelector(".coll-body").hidden));
 });
 function openColl(id){ const pn=document.getElementById(id); if(pn && pn.querySelector(".coll-body").hidden) setColl(pn,true); }
+document.getElementById("list").addEventListener("click",e=>{ if(e.target.closest("#emptyAdd")){ openColl("addPanel"); document.getElementById("addPanel").scrollIntoView({behavior:"smooth",block:"start"}); } });
 document.getElementById("dateIn").addEventListener("change",e=>{ if(e.target.value) goDate(e.target.value); });
 document.getElementById("goToday").addEventListener("click",()=>goDate(todayKey));
 document.getElementById("prevDay").addEventListener("click",()=>goDay(-1));
@@ -1826,6 +1891,7 @@ document.getElementById("scanManual").addEventListener("submit",e=>{
 const num=v=>{const x=parseFloat(v); return isFinite(x)?Math.round(x*10)/10:"";};
 async function lookup(code){
   const own=custom.find(p=>p.code===code);
+  openColl("addPanel");
   if(own){ fillProducts(own.id); scanStatus.textContent=`Нашёл в твоих продуктах: ${own.n}. Укажи количество и нажми «Добавить».`; document.getElementById("addForm").scrollIntoView({behavior:"smooth",block:"center"}); return; }
   scanStatus.textContent=`Штрихкод ${code}. Ищу продукт в базе…`;
   let sh=shared.find(p=>p.code===code);
