@@ -118,6 +118,7 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .chip{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:6px 12px;font-size:.86rem;cursor:pointer}
 .chip:hover{border-color:var(--fg)}
 .chip b{font-weight:600}
+.chips .chip{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* scanner */
 .search-row{display:flex;gap:8px}
@@ -430,6 +431,7 @@ details summary{color:var(--fg);font-size:.92rem}
 .tag.techlink{border:0;font:inherit;font-size:.68rem;font-weight:600;color:var(--prot);background:rgba(110,150,255,.12);cursor:pointer}
 .techpic{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:1.45;background:radial-gradient(90% 80% at 50% 40%,#202a3a,#171e29);border:1px solid var(--line);cursor:pointer}
 .techpic svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.techview{position:absolute;right:8px;top:8px;font-size:.7rem;color:var(--muted);background:rgba(12,16,23,.55);border-radius:8px;padding:3px 8px}
 .techcue{font-size:.86rem!important;line-height:1.45;color:var(--fg)!important}
 .mapttl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-top:4px}
 .techhint{position:absolute;left:8px;bottom:8px;font-size:.7rem;color:var(--muted);background:rgba(12,16,23,.55);border-radius:8px;padding:3px 8px}
@@ -578,7 +580,7 @@ body.onb-on::before{display:none}
   <section class="panel coll addp" id="addPanel" aria-labelledby="a-h">
     <button class="coll-head" type="button" aria-expanded="false" aria-controls="addBody"><svg class="chev" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M4 2.5 8.5 6 4 9.5Z" fill="currentColor"/></svg><h2 id="a-h">Добавить еду</h2><span class="addplus" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span></button>
     <div class="coll-body" id="addBody" hidden>
-    <div class="label">Быстро</div>
+    <div class="label" id="quickLbl">Быстро</div>
     <div class="chips" id="quick"></div>
     <div class="field search">
       <label for="q">Поиск продукта</label>
@@ -637,12 +639,12 @@ body.onb-on::before{display:none}
   </section>
 
   <!-- eaten -->
-  <section class="panel" aria-labelledby="e-h">
-    <div class="head-row">
-      <h2 id="e-h">Что съел</h2>
+  <section class="panel coll" id="eatPanel" aria-labelledby="e-h">
+    <button class="coll-head" type="button" aria-expanded="false" aria-controls="eatBody"><svg class="chev" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M4 2.5 8.5 6 4 9.5Z" fill="currentColor"/></svg><h2 id="e-h">Что съел</h2><span class="coll-sum num" id="eatSum"></span></button>
+    <div class="coll-body" id="eatBody" hidden>
       <div class="dayacts"><button class="btn ghost" type="button" id="copyBtn">Перенести с другого дня</button><button class="btn ghost" type="button" id="clearBtn">Очистить день</button></div>
+      <div class="list" id="list"></div>
     </div>
-    <div class="list" id="list"></div>
   </section>
 
   <!-- my products -->
@@ -1248,6 +1250,17 @@ const DEF = {sex:"",age:"",h:"",w:"",act:"1.45",goal:"recomp",exp:"nov"};
 const profileOK=()=>!!settings.sex && +settings.age>=12 && +settings.h>=120 && +settings.w>=25;
 let settings = Object.assign({}, DEF, S.get("settings",{}));
 let custom = S.get("custom",[]);
+let cdel = S.get("cdel",{}); // удалённые свои продукты: id → время удаления (чтобы удаление доходило до других устройств)
+function touchCustom(id){ const it=custom.find(x=>x.id===id); if(it) it.t=Date.now(); }
+function mergeCustom(loc,rem,ld,rd){
+  const del=Object.assign({},rd||{}); for(const k in (ld||{})) del[k]=Math.max(del[k]||0,ld[k]);
+  const m=new Map();
+  for(const it of (rem||[])) if(it&&it.id) m.set(it.id,it);
+  for(const it of (loc||[])){ if(!it||!it.id) continue; const r=m.get(it.id); if(!r || (it.t||0)>=(r.t||0)) m.set(it.id,it); }
+  const order=[...(loc||[]).map(x=>x&&x.id), ...(rem||[]).map(x=>x&&x.id)].filter((id,i,a)=>id&&a.indexOf(id)===i);
+  const list=order.map(id=>m.get(id)).filter(it=>it && !(del[it.id]!=null && del[it.id]>=(it.t||0)));
+  return {list,del};
+}
 let shared = S.get("shared",[]); // общая база: продукты, которые добавили пользователи по штрихкоду
 let uover = S.get("uover",{});
 BASE.forEach(p=>{ if(p.u) p.u0=Object.assign({},p.u); });
@@ -1356,6 +1369,8 @@ function render(){
     ? `До нормы белка не хватает ${r(pl)} г — это примерно ${Math.max(1,Math.round(pl/22))} порц. протеина или ${r(pl/0.3)} г куриной грудки.`
     : "Норма белка на сегодня набрана.";
 
+  { const nI=diary.items.length; document.getElementById("eatSum").textContent = nI ? `${nI} ${plural(nI,"запись","записи","записей")} · ${r(diary.items.reduce((a,i)=>a+i.k,0))} ккал` : "пусто"; }
+  renderQuick();
   const L=document.getElementById("list");
   if(!diary.items.length){L.innerHTML=`<p class="empty">Пока пусто. <button type="button" class="linkbtn" id="emptyAdd">Добавить первый приём пищи</button></p>`;}
   else L.innerHTML=diary.items.map((i,ix)=>{ const adv=adviceFor(prodOf(i));
@@ -1459,12 +1474,39 @@ document.getElementById("addForm").addEventListener("submit",e=>{
   if(!(amt>0)) return;
   add(document.getElementById("prod").value,amt,uEl.value);
 });
-document.getElementById("quick").innerHTML=QUICK.map(([id,a])=>{
-  const p=byId(id); const lbl=p.u?`${a} ${p.u.n}`:`${a} г`; const SHORT={whey:"Протеин",hpmilk:"Молоко Asia Mix",egg:"Яйца",prost2:"Творог 2%"};
-  return `<button class="chip" type="button" data-id="${id}" data-a="${a}"><b>${esc(SHORT[id]||p.n.replace(/\s*\(.*\)/,""))}</b> · ${lbl}</button>`;
-}).join("");
+// быстрые кнопки: то, что ты чаще всего ел за последние 3 недели, с твоим обычным количеством
+const QSHORT={whey:"Протеин",hpmilk:"Молоко Asia Mix",egg:"Яйца",prost2:"Творог 2%"};
+function frequentFoods(max){
+  const score={}, combos={};
+  for(let i=0;i<21;i++){
+    const k=shiftDay(todayKey,-i), d=days[k]; if(!d||!d.items||!d.items.length) continue;
+    const w = i<7 ? 1 : i<14 ? .6 : .35, seen=new Set();
+    for(const it of d.items){
+      const pr=it.pid&&byId(it.pid); if(!pr || !(it.amt>0)) continue;
+      const mode = it.unit==="г" ? "g" : "u";
+      if(!seen.has(pr.id)){ seen.add(pr.id); score[pr.id]=(score[pr.id]||0)+w; }
+      const ck=pr.id+"|"+mode+"|"+it.amt, c=combos[ck]||(combos[ck]={id:pr.id,mode,amt:it.amt,n:0,last:""});
+      c.n+=w; if(k>c.last) c.last=k;
+    }
+  }
+  return Object.keys(score).filter(id=>score[id]>=1.2)            // хотя бы пару раз за последнее время
+    .sort((a,b)=>score[b]-score[a]).slice(0,max)
+    .map(id=>Object.values(combos).filter(c=>c.id===id).sort((a,b)=>b.n-a.n||(a.last<b.last?1:-1))[0]);
+}
+let quickSig="";
+function renderQuick(){
+  let list=frequentFoods(5), mine=list.length>0;
+  if(list.length<3) QUICK.forEach(([id,a])=>{ const p=byId(id); if(p && list.length<4 && !list.some(x=>x.id===id)) list.push({id,mode:p.u?"u":"g",amt:a}); });
+  const sig=JSON.stringify(list); if(sig===quickSig) return; quickSig=sig;
+  document.getElementById("quickLbl").textContent = mine ? "Часто добавляешь" : "Быстро";
+  document.getElementById("quick").innerHTML=list.map(({id,mode,amt})=>{
+    const p=byId(id); const unitN = mode==="u"&&p.u ? p.u.n : "г";
+    const nm=QSHORT[id]||p.n.replace(/\s*\(.*?\)/g,"").trim();
+    return `<button class="chip" type="button" data-id="${id}" data-a="${amt}" data-m="${mode}"><b>${esc(nm)}</b> · ${String(amt).replace(".",",")} ${esc(unitN)}</button>`;
+  }).join("");
+}
 document.getElementById("quick").addEventListener("click",e=>{
-  const b=e.target.closest(".chip"); if(b) add(b.dataset.id, +b.dataset.a);
+  const b=e.target.closest(".chip"); if(b) add(b.dataset.id, +b.dataset.a, b.dataset.m);
 });
 document.getElementById("list").addEventListener("click",e=>{
   const w=e.target.closest(".warnbtn");
@@ -1535,9 +1577,9 @@ document.getElementById("copyBtn").addEventListener("click",()=>{
 document.getElementById("customForm").addEventListener("submit",e=>{
   e.preventDefault();
   const g=id=>parseFloat(document.getElementById(id).value)||0;
-  const p={id:"c"+Date.now(), n:document.getElementById("cName").value.trim(), k:g("cK"),p:g("cP"),f:g("cF"),c:g("cC")};
+  const p={id:"c"+Date.now(), n:document.getElementById("cName").value.trim(), k:g("cK"),p:g("cP"),f:g("cF"),c:g("cC"), t:Date.now()};
   const ug=g("cUg"); if(ug>0) p.u={n:document.getElementById("cUn").value.trim()||"порц.", g:ug};
-  const code=document.getElementById("cCode").value; if(code){ const keep=e.target.dataset.editId; custom=custom.filter(x=>x.code!==code||x.id===keep); p.code=code; }
+  const code=document.getElementById("cCode").value; if(code){ const keep=e.target.dataset.editId; custom.filter(x=>x.code===code&&x.id!==keep).forEach(x=>{ cdel[x.id]=Date.now(); }); S.set("cdel",cdel); custom=custom.filter(x=>x.code!==code||x.id===keep); p.code=code; }
   scanStatus.textContent="";
   if(!p.n) return;
   const eid=e.target.dataset.editId;
@@ -1726,7 +1768,7 @@ document.getElementById("myList").addEventListener("click",e=>{
   if(t.dataset.reset){ delete uover[t.dataset.reset]; S.set("uover",uover); applyOverrides(); fillProducts(document.getElementById("prod").value); renderMyList(); return; }
   if(t.dataset.mydel){ delId=t.dataset.mydel; renderMyList(); return; }
   if(t.dataset.mydelno){ delId=null; renderMyList(); return; }
-  if(t.dataset.mydelyes){ custom=custom.filter(p=>p.id!==t.dataset.mydelyes); delId=null; S.set("custom",custom);
+  if(t.dataset.mydelyes){ cdel[t.dataset.mydelyes]=Date.now(); S.set("cdel",cdel); custom=custom.filter(p=>p.id!==t.dataset.mydelyes); delId=null; S.set("custom",custom);
     const f=document.getElementById("customForm"); if(f.dataset.editId===t.dataset.mydelyes) setCustomEditMode(null);
     fillProducts(); renderMyList(); render(); }
 });
@@ -1737,11 +1779,11 @@ function editPortion(id){
   const def = !isCustom && pr.u0 ? `<p>Стандартно: ${esc(pr.u0.n)} = ${pr.u0.g} г.</p>` : "";
   const acts=[{label:"Отмена"}];
   if(!isCustom && uover[id]) acts.push({label:"Вернуть стандарт",fn:()=>{ delete uover[id]; savePortion(id); }});
-  if(pr.u) acts.push({label:"Только граммы",fn:()=>{ if(isCustom){ delete pr.u; S.set("custom",custom); } else { uover[id]={n:"",g:0}; } savePortion(id); }});
+  if(pr.u) acts.push({label:"Только граммы",fn:()=>{ if(isCustom){ delete pr.u; touchCustom(id); S.set("custom",custom); } else { uover[id]={n:"",g:0}; } savePortion(id); }});
   acts.push({label:"Сохранить",cls:"",keep:true,fn:()=>{
     const n=document.getElementById("pUn").value.trim()||"порц.", g=parseFloat(document.getElementById("pUg").value);
     if(!(g>0)){ document.getElementById("pMsg").textContent="Укажи вес в граммах, больше нуля."; return; }
-    if(isCustom){ pr.u={n,g}; S.set("custom",custom); } else { uover[id]={n,g}; }
+    if(isCustom){ pr.u={n,g}; touchCustom(id); S.set("custom",custom); } else { uover[id]={n,g}; }
     closeModal(); savePortion(id);
   }});
   openModal(`Порция: ${pr.n}`,
@@ -2212,15 +2254,15 @@ const ANIM={
    A:{t:-98,ua:100,uab:25,fa:60,th:0,thb:3,sh:95,ft:-10},B:{t:-98,ua:100,uab:25,fa:60,th:0,thb:3,sh:-4,ft:-70}},
  legcurl:{an:["H",80,70],crop:"low",eq:[{t:"slab",x1:30,y1:77,x2:126,y2:77,w:12},{t:"post",x:44,y1:80,y2:108},{t:"post",x:110,y1:80,y2:108},{t:"floor",y:108,x0:20,x1:140},{t:"pad",at:"A",side:-1}],
    A:{t:0,hd:10,ua:60,uab:20,fa:15,th:180,thb:3,sh:180,ft:90},B:{t:0,hd:10,ua:60,uab:20,fa:15,th:180,thb:3,sh:255,ft:165}},
- calf:{an:["F1",88,100],crop:"feet",eq:[{t:"box",x0:80,x1:108,y0:100,y1:108},FLOOR,{t:"db",ax:"x"}],
+ calf:{an:["F1",92,100],cam:[10,8],crop:"feet",eq:[{t:"box",x0:89,x1:116,y0:100,y1:108},FLOOR,{t:"db",ax:"x"}],
    A:{t:-90,ua:92,uab:6,fa:90,th:90,thb:3,sh:90,ft:-28},B:{t:-90,ua:92,uab:6,fa:90,th:90,thb:3,sh:90,ft:50}},
- bench:{an:["H",88,70],cam:[28,20],eq:[...BENCHF,{t:"bar",r:9}],
+ bench:{an:["H",88,70],cam:[-18,16],eq:[...BENCHF,{t:"bar",r:9}],
    A:{t:180,ua:-90,uab:22,fa:-90,fab:15,th:30,thb:18,sh:100,ft:0},B:{t:180,ua:75,uab:45,fa:-90,fab:-5,th:30,thb:18,sh:100,ft:0}},
- incline:{an:["H",86,76],cam:[28,18],eq:[...INCF,{t:"bar",r:9}],
+ incline:{an:["H",86,76],cam:[-18,16],eq:[...INCF,{t:"bar",r:9}],
    A:{t:-150,ua:-88,uab:22,fa:-90,fab:15,th:12,thb:18,sh:95,ft:0},B:{t:-150,ua:100,uab:45,fa:-95,fab:-5,th:12,thb:18,sh:95,ft:0}},
- dbbench:{an:["H",88,70],cam:[28,20],eq:[...BENCHF,{t:"db",ax:"z"}],
+ dbbench:{an:["H",88,70],cam:[-18,16],eq:[...BENCHF,{t:"db",ax:"z"}],
    A:{t:180,ua:-90,uab:10,fa:-90,fab:0,th:30,thb:18,sh:100,ft:0},B:{t:180,ua:75,uab:45,fa:-90,fab:-5,th:30,thb:18,sh:100,ft:0}},
- dbincline:{an:["H",86,76],cam:[28,18],eq:[...INCF,{t:"db",ax:"z"}],
+ dbincline:{an:["H",86,76],cam:[-18,16],eq:[...INCF,{t:"db",ax:"z"}],
    A:{t:-150,ua:-88,uab:10,fa:-90,fab:0,th:12,thb:18,sh:95,ft:0},B:{t:-150,ua:100,uab:45,fa:-95,fab:-5,th:12,thb:18,sh:95,ft:0}},
  fly:{an:["H",62,80],cam:[60,16],crop:"up",eq:[...SEATF,{t:"torsopad"},{t:"vhandle"}],
    A:{t:-92,ua:-5,uab:100,fa:-10,fab:88,th:0,thb:10,sh:90},B:{t:-92,ua:-5,uab:-8,fa:-10,fab:-25,th:0,thb:10,sh:90}},
@@ -2251,7 +2293,7 @@ const ANIM={
    A:{t:-92,ua:10,uab:70,fa:-90,fab:0,th:0,thb:10,sh:90},B:{t:-92,ua:-85,uab:25,fa:-90,fab:-5,th:0,thb:10,sh:90}},
  ohp:{an:["A1",80,108],cam:[35,10],crop:"up",eq:[{t:"bar",r:9}],
    A:{t:-90,ua:70,uab:30,fa:-75,fab:0,th:90,thb:5,sh:90},B:{t:-90,ua:-88,uab:22,fa:-90,fab:6,th:90,thb:5,sh:90}},
- lateral:{an:["A1",80,108],cam:[72,16],sym:1,crop:"up",eq:[{t:"db",ax:"x"}],
+ lateral:{an:["A1",80,108],cam:[72,16],sym:1,view:"вид спереди",crop:"up",eq:[{t:"db",ax:"x"}],
    A:{t:-90,ua:75,uab:-2,fa:70,fab:-10,th:90,thb:5,sh:90},B:{t:-90,ua:0,uab:60,fa:-2,fab:58,th:90,thb:5,sh:90}},
  revfly:{an:["H",62,82],cam:[58,22],crop:"up",eq:[...SEATF,{t:"chestpad"},{t:"vhandle"}],
    A:{t:-86,ua:0,uab:-12,fa:0,fab:-15,th:0,thb:10,sh:90},B:{t:-86,ua:2,uab:92,fa:2,fab:95,th:0,thb:10,sh:90}},
@@ -2265,13 +2307,13 @@ const ANIM={
    A:{t:-90,ua:92,uab:6,fa:90,fab:0,th:90,thb:5,sh:90},B:{t:-90,ua:85,uab:6,fa:-55,fab:0,th:90,thb:5,sh:90}},
  cablecurl:{an:["A1",76,108],crop:"up",eq:[{t:"handle",ext:3},{t:"cable",x:110,y:106}],
    A:{t:-90,ua:94,uab:8,fa:75,fab:-4,th:90,thb:5,sh:90},B:{t:-90,ua:88,uab:8,fa:-55,fab:-4,th:90,thb:5,sh:90}},
- french:{an:["H",88,70],cam:[28,20],eq:[...BENCHF,{t:"bar",r:6}],
+ french:{an:["H",88,70],cam:[-18,16],eq:[...BENCHF,{t:"bar",r:6}],
    A:{t:180,ua:-100,uab:6,fa:-100,fab:0,th:30,thb:18,sh:100,ft:0},B:{t:180,ua:-104,uab:6,fa:-200,fab:0,th:30,thb:18,sh:100,ft:0}},
  pushdown:{an:["A1",76,108],crop:"up",eq:[{t:"handle",ext:3},{t:"cable",x:98,y:-10}],
    A:{t:-84,ua:96,uab:4,fa:-35,fab:-6,th:90,thb:5,sh:90},B:{t:-84,ua:94,uab:4,fa:85,fab:-6,th:90,thb:5,sh:90}},
- ohtri:{an:["A1",80,108],cam:[-145,8],sym:1,crop:"up",eq:[{t:"db1"}],
-   A:{t:-90,ua:-100,uab:4,fa:112,fab:-25,th:90,thb:5,sh:90},B:{t:-90,ua:-96,uab:4,fa:-92,fab:-25,th:90,thb:5,sh:90}},
- closegrip:{an:["H",88,70],cam:[28,20],eq:[...BENCHF,{t:"bar",r:9}],
+ ohtri:{an:["A1",80,108],cam:[-130,10],sym:1,view:"вид сзади",crop:"up",eq:[{t:"db1"}],
+   A:{t:-90,ua:-78,uab:8,fa:125,fab:-20,th:90,thb:5,sh:90},B:{t:-90,ua:-86,uab:8,fa:-92,fab:-20,th:90,thb:5,sh:90}},
+ closegrip:{an:["H",88,70],cam:[-18,16],eq:[...BENCHF,{t:"bar",r:9}],
    A:{t:180,ua:-90,uab:10,fa:-90,fab:0,th:30,thb:18,sh:100,ft:0},B:{t:180,ua:70,uab:22,fa:-90,fab:-10,th:30,thb:18,sh:100,ft:0}},
  wrist:{an:["H",56,80],crop:"up",eq:[{t:"slab",x1:36,y1:86,x2:66,y2:86,w:12},{t:"post",x:50,y1:89,y2:108},{t:"floor",y:108,x0:20,x1:140},{t:"bar",at:"N",r:6}],
    A:{t:-55,ua:85,uab:4,fa:3,hw:50,th:0,thb:6,sh:92},B:{t:-55,ua:85,uab:4,fa:3,hw:-35,th:0,thb:6,sh:92}},
@@ -2289,7 +2331,7 @@ function placed(def,k){
   for(const key in P) P[key]=[P[key][0]+dx,P[key][1]+dy,P[key][2]];
   P.q=q; return P;
 }
-function camOf(def){ const [y,p]=def.cam||[28,12]; return {cy:Math.cos(y*D2R),sy:Math.sin(y*D2R),cp:Math.cos(p*D2R),sp:Math.sin(p*D2R)}; }
+function camOf(def){ const [y,p]=def.cam||[14,9]; return {cy:Math.cos(y*D2R),sy:Math.sin(y*D2R),cp:Math.cos(p*D2R),sp:Math.sin(p*D2R)}; }
 function proj(c,p){ const d0=p[0]*c.sy+p[2]*c.cy; return [p[0]*c.cy-p[2]*c.sy, p[1]*c.cp+d0*c.sp, -p[1]*c.sp+d0*c.cp]; }
 const f1=v=>v.toFixed(1);
 function segCol(m,keys,far){ let c=MCOL.n; for(const k of keys) if(m.p.includes(k)){ c=MCOL.p; break; } if(c===MCOL.n) for(const k of keys) if(m.s.includes(k)){ c=MCOL.s; break; } return far?MFAR[c]:c; }
@@ -2303,16 +2345,16 @@ function drawScene(id,k){
   // тело
   for(const n of ["2","1"]){ const far=n==="2"&&!def.sym, b=n==="2"?-4:4;
     const dot=(p,r,col)=>{ const A=pr(p); return `<circle cx="${f1(A[0])}" cy="${f1(A[1])}" r="${r}" fill="${col}"/>`; };
-    items.push({d:pr(mid(P["H"+n],P["K"+n]))[2]+b, s:L(P["H"+n],P["K"+n],10,segCol(m,SEGMUS.th,far))+dot(P["H"+n],6.2,segCol(m,SEGMUS.hip,far))});
-    seg(P["K"+n],P["A"+n],8,segCol(m,SEGMUS.sh,far),b); seg(P["A"+n],P["F"+n],5,far?MFAR[MCOL.n]:MCOL.n,b);
-    items.push({d:pr(mid(P["S"+n],P["E"+n]))[2]+b+.5, s:L(P["S"+n],P["E"+n],7.5,segCol(m,SEGMUS.ua,far))+dot(P["S"+n],5.8,segCol(m,SEGMUS.shoulder,far))});
-    if(n==="2") items.push({d:pr(mid(P.H,P.S))[2]+.05, s:dot(P.S2,5.8,segCol(m,SEGMUS.shoulder,far))});
-    seg(P["E"+n],P["W"+n],6.5,segCol(m,SEGMUS.fa,far),b+.6);
+    items.push({d:pr(mid(P["H"+n],P["K"+n]))[2]+b, s:L(P["H"+n],P["K"+n],8.5,segCol(m,SEGMUS.th,far))+dot(P["H"+n],5.4,segCol(m,SEGMUS.hip,far))});
+    seg(P["K"+n],P["A"+n],7,segCol(m,SEGMUS.sh,far),b); seg(P["A"+n],P["F"+n],5.5,far?"#3a4456":"#55627a",b+.3);
+    items.push({d:pr(mid(P["S"+n],P["E"+n]))[2]+b+.5, s:L(P["S"+n],P["E"+n],6.2,segCol(m,SEGMUS.ua,far))+dot(P["S"+n],5,segCol(m,SEGMUS.shoulder,far))});
+    if(n==="2") items.push({d:pr(mid(P.H,P.S))[2]+.05, s:dot(P.S2,5,segCol(m,SEGMUS.shoulder,far))});
+    seg(P["E"+n],P["W"+n],5.4,segCol(m,SEGMUS.fa,far),b+.6);
     if(P["N"+n]) seg(P["W"+n],P["N"+n],5,far?MFAR[MCOL.n]:MCOL.n,b+.6);
   }
   const tc=segCol(m,SEGMUS.torso,false);
-  items.push({d:pr(mid(P.H,P.S))[2], s:poly([P.H1,P.H2,P.S2,P.S1],tc,tc,9)});
-  seg(P.S,P.Hd,6,MCOL.n,.2); ball(P.Hd,7,MCOL.n,.3);
+  items.push({d:pr(mid(P.H,P.S))[2], s:poly([P.H1,P.H2,P.S2,P.S1],tc,tc,8)});
+  seg(P.S,P.Hd,5,MCOL.n,.2); ball(P.Hd,6.6,MCOL.n,.3);
   // снаряды
   const EQ=MCOL.eq, EF=MCOL.eqf;
   const t=q.t*D2R, front=[Math.cos(t+Math.PI/2),Math.sin(t+Math.PI/2),0];
@@ -2340,7 +2382,7 @@ function drawScene(id,k){
           if(e.ax==="x") d=[1,0,0]; else if(e.ax==="z") d=[0,0,1]; else { const a=q.fa*D2R; d=[Math.cos(a+Math.PI/2),Math.sin(a+Math.PI/2),0]; }
           const p0=mv(w,d,-5), p1=mv(w,d,5), z=pr(w)[2]+(n==="1"?1:-1)*.8;
           items.push({d:z, s:L(p0,p1,2.4,EQ)+L(mv(w,d,-6.5),mv(w,d,-3.5),6.5,EQ)+L(mv(w,d,3.5),mv(w,d,6.5),6.5,EQ)}); } break; }
-      case "db1": { const w=mv(P.W,[0,1,0],4); items.push({d:pr(w)[2]+3, s:L(mv(w,[0,1,0],-6),mv(w,[0,1,0],6),2.4,EQ)+L(mv(w,[0,1,0],-7.5),mv(w,[0,1,0],-4),7,EQ)+L(mv(w,[0,1,0],4),mv(w,[0,1,0],7.5),7,EQ)}); break; }
+      case "db1": { const w=mv(P.W,[0,1,0],4); items.push({d:pr(w)[2]+(w[0]<P.S[0]-2?-1:3), s:L(mv(w,[0,1,0],-6),mv(w,[0,1,0],6),2.4,EQ)+L(mv(w,[0,1,0],-7.5),mv(w,[0,1,0],-4),7,EQ)+L(mv(w,[0,1,0],4),mv(w,[0,1,0],7.5),7,EQ)}); break; }
       case "handle": { const ext=e.ext||3, a=[P.W1[0],P.W1[1],P.W1[2]+ext], b2=[P.W2[0],P.W2[1],P.W2[2]-ext]; items.push({d:pr(P.W)[2]+.5, s:L(a,b2,2.8,EQ)}); break; }
       case "vgrip": items.push({d:pr(P.W)[2]+.5, s:L([P.W[0],P.W[1]-3,0],[P.W[0],P.W[1]+3,0],3,EQ)}); break;
       case "vhandle": for(const n of ["1","2"]){ const w=P["W"+n]; items.push({d:pr(w)[2]+(n==="1"?1:-1), s:L(mv(w,[0,1,0],-5),mv(w,[0,1,0],5),3,EQ)}); } break;
@@ -2434,7 +2476,7 @@ function showTech(id){
   const ex=train.ex.find(x=>x.id===id)||{cat:id,n:(EXMAP[id]||{}).n||""}; const c=ex.cat, m=EXMUS[c];
   if(!m || !ANIM[c]){ openModal(ex.n,`<p>Для своего упражнения пока нет схемы и карты мышц.</p>`,[{label:"Закрыть"}]); return; }
   const names=l=>l.map(k=>MUSRU[k]||k).join(", ");
-  openModal(ex.n, `<div class="techpic" id="techPic" role="img" aria-label="Как выполнять: ${esc(ex.n)}"><svg viewBox="${animBox(c).join(" ")}" id="techSvg" preserveAspectRatio="xMidYMid meet">${animFrame(c,0)}</svg><span class="techhint">нажми, чтобы остановить</span></div>
+  openModal(ex.n, `<div class="techpic" id="techPic" role="img" aria-label="Как выполнять: ${esc(ex.n)}"><svg viewBox="${animBox(c).join(" ")}" id="techSvg" preserveAspectRatio="xMidYMid meet">${animFrame(c,0)}</svg><span class="techhint">нажми, чтобы остановить</span>${ANIM[c].view?`<span class="techview">${ANIM[c].view}</span>`:""}</div>
     ${TECHCUE[c]?`<p class="techcue">${esc(TECHCUE[c])}</p>`:""}
     <div class="mapttl">Какие мышцы работают</div>
     ${bodyMap(m)}
@@ -2714,8 +2756,17 @@ window.Sync=(function(){
       const m=metaDoc.exists?metaDoc.data():{};
       let changed=false;
       META_KEYS.forEach(k=>{ const rv=m[k], ru=(m.u&&m.u[k])||0, lu=st.meta[k]||0;
+        if(k==="custom") return; // свои продукты сливаются по отдельности, см. ниже
         if(rv!==undefined && ru>lu){ applyMeta(k,rv); st.meta[k]=ru; changed=true; }
+        else if(rv!==undefined && ru===0 && lu===0){ if(mergeZero(k,rv)) changed=true; st.meta[k]=now(); st.dirtyMeta=true; } // данные из старых версий без отметки времени
         else if(lu>ru || (rv===undefined && lu===0 && first)) { st.dirtyMeta=true; } });
+      { // свои продукты: объединяем списки с обоих устройств, удалённые не возвращаем
+        const rc=Array.isArray(m.custom)?m.custom:[], mg=mergeCustom(custom,rc,cdel,m.cdel||{});
+        const canon=l=>JSON.stringify([...l].sort((a,b)=>a.id<b.id?-1:1));
+        if(canon(mg.list)!==canon(custom)){ custom=mg.list; S_raw("custom",custom); changed=true; }
+        if(JSON.stringify(mg.del)!==JSON.stringify(cdel)){ cdel=mg.del; S_raw("cdel",cdel); }
+        if(canon(mg.list)!==canon(rc) || JSON.stringify(mg.del)!==JSON.stringify(m.cdel||{})){ st.dirtyMeta=true; st.meta.custom=Math.max(st.meta.custom||0,now()); }
+      }
       let q=uref().collection("days"); if(!first && st.last) q=q.where("u",">",st.last-60000);
       const ds=await q.get(); const remote=new Set();
       ds.forEach(d=>{ const k=d.id, v=d.data(), ru=v.u||0, lu=st.days[k]||0; remote.add(k);
@@ -2736,6 +2787,13 @@ window.Sync=(function(){
   }
   function diffDaysSilent(){ const c={}; for(const k in days) c[k]=JSON.stringify((days[k]&&days[k].items)||[]); snap=c; try{localStorage.setItem("bzhu_syncSnap",JSON.stringify(snap));}catch(e){} }
   function S_raw(k,v){ try{localStorage.setItem("bzhu_"+k,JSON.stringify(v))}catch(e){} }
+  // данные без отметки времени с обеих сторон (сохранены старой версией): объединяем, а не теряем
+  function mergeZero(k,v){
+    if(k==="uover"||k==="body"){ const loc=k==="uover"?uover:body, mg=Object.assign({},v||{},loc); if(JSON.stringify(mg)===JSON.stringify(loc)) return false; applyMeta(k,mg); return true; }
+    if(k==="settings"){ const rs=Object.assign({},DEF,v||{}); if(!profileOK() && rs.sex && +rs.age>=12 && +rs.h>=120 && +rs.w>=25){ applyMeta(k,v); return true; } return false; }
+    if(k==="train"){ if(!(train.ex||[]).length && v && (v.ex||[]).length){ applyMeta(k,v); return true; } return false; }
+    return false;
+  }
   function applyMeta(k,v){
     if(k==="settings"){ settings=Object.assign({},DEF,v); S_raw("settings",settings); }
     if(k==="custom"){ custom=Array.isArray(v)?v:[]; S_raw("custom",custom); }
@@ -2751,7 +2809,7 @@ window.Sync=(function(){
       const list=st.dirtyDays.slice(0,400);
       list.forEach(k=>{ batch.set(uref().collection("days").doc(k),{items:JSON.parse(JSON.stringify((days[k]&&days[k].items)||[])),u:st.days[k]||now()}); });
       if(st.dirtyMeta){ const u={}; META_KEYS.forEach(k=>u[k]=st.meta[k]||0);
-        batch.set(uref().collection("meta").doc("state"),JSON.parse(JSON.stringify({settings,custom,uover,body,train,u}))); }
+        batch.set(uref().collection("meta").doc("state"),JSON.parse(JSON.stringify({settings,custom,cdel,uover,body,train,u}))); }
       await batch.commit();
       st.dirtyDays=st.dirtyDays.filter(k=>!list.includes(k)); st.dirtyMeta=false; st.last=now(); save(); busy=false;
       if(st.dirtyDays.length) return push();
