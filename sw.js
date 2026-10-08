@@ -1,6 +1,6 @@
 // Offline support: app files are cached on install, fonts are cached on first use.
-// Bump VERSION after changing index.html so phones pick up the new version.
-const VERSION = "bzhu-v20";
+// VERSION must match APP_VERSION in index.html (major.minor.patch). Bump it on every release so phones pick up the new version.
+const VERSION = "bzhu-1.0.0";
 const ASSETS = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "zxing.min.js", "firebase-config.js", "firebase-app-compat.js", "firebase-auth-compat.js", "firebase-firestore-compat.js"];
 
 self.addEventListener("install", e => {
