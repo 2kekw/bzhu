@@ -556,9 +556,9 @@ body.onb-on::before{display:none}
 
 /* ================= 2.0: премиальный интерфейс — одна акцентная краска, тишина, крупные цифры ================= */
 :root,:root[data-theme="gold"]{--bg:#0A0A0B;--surface:#151517;--surface2:#1F1F22;--track:#2A2A2E;--fg:#F5F3EE;--muted:#9E9A92;--dim:#5E5B55;--prot:#D4B06A;--on:#17120A;--fat:#D0866A;--carb:#8E9BA8;--ok:#7FB98C;--warn:#E5695C;--line:rgba(255,240,210,.06);--sep:rgba(255,240,210,.08)}
-:root[data-theme="coal"]{--bg:#100D0B;--surface:#1A1613;--surface2:#241F1B;--track:#2F2924;--fg:#F4EDE6;--muted:#A99C90;--dim:#6E6259;--prot:#FF8A52;--on:#1A0E06;--fat:#E8B45A;--carb:#A6B58C;--ok:#8CC07A;--warn:#FF6B5E;--line:rgba(255,236,220,.06);--sep:rgba(255,236,220,.08)}
+:root[data-theme="coal"]{--bg:#100D0B;--surface:#1A1613;--surface2:#241F1B;--track:#2F2924;--fg:#F4EDE6;--muted:#A99C90;--dim:#6E6259;--prot:#FF8A52;--on:#1A0E06;--fat:#E8B45A;--carb:#A6B58C;--ok:#8CC07A;--warn:#FF4D6A;--line:rgba(255,236,220,.06);--sep:rgba(255,236,220,.08)}
 :root[data-theme="teal"]{--bg:#0B0E10;--surface:#151A1D;--surface2:#1E2528;--track:#2A3236;--fg:#EAF1F3;--muted:#95A4AA;--dim:#56646A;--prot:#2ED3B7;--on:#04140F;--fat:#E6B566;--carb:#8EA6E8;--ok:#6FCB8E;--warn:#FF6F66;--line:rgba(220,245,250,.06);--sep:rgba(220,245,250,.08)}
-:root[data-theme="red"]{--bg:#080809;--surface:#131314;--surface2:#1C1C1E;--track:#28282B;--fg:#F6F6F7;--muted:#9C9CA1;--dim:#5C5C61;--prot:#FF3B47;--on:#160407;--fat:#D9B46A;--carb:#A9B0BA;--ok:#7FC48C;--warn:#FF8A3D;--line:rgba(255,255,255,.06);--sep:rgba(255,255,255,.08)}
+:root[data-theme="red"]{--bg:#080809;--surface:#131314;--surface2:#1C1C1E;--track:#28282B;--fg:#F6F6F7;--muted:#9C9CA1;--dim:#5C5C61;--prot:#FF3B47;--on:#160407;--fat:#D9B46A;--carb:#A9B0BA;--ok:#7FC48C;--warn:#FFB020;--line:rgba(255,255,255,.06);--sep:rgba(255,255,255,.08)}
 :root[data-theme="violet"]{--bg:#0A0910;--surface:#14121C;--surface2:#1C1927;--track:#282436;--fg:#F1EEF8;--muted:#A49EB8;--dim:#5E5872;--prot:#B49BFF;--on:#150D2C;--fat:#E9BE72;--carb:#77C9BA;--ok:#7FC79A;--warn:#FF7A86;--line:rgba(225,215,255,.06);--sep:rgba(225,215,255,.08)}
 :root{--accent:var(--prot);--chip:var(--surface2);--field:var(--surface2);
   --font-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Onest",system-ui,sans-serif;--font-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Onest",system-ui,sans-serif}
@@ -623,8 +623,8 @@ body[data-tab="diary"] .topbar{display:none}
 .addwrap>.addp{flex:1;min-width:0}
 .scanq{width:52px;height:52px;flex:none;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 .scanq:active,.addp>.coll-head:active{transform:scale(.97)}
-.addwrap:has(.coll-head[aria-expanded="true"]) .scanq{display:none}
-.addp:has(>.coll-head[aria-expanded="false"]){background:var(--prot);border-color:var(--prot);padding:0;border-radius:14px}
+.addp.open+.scanq{display:none}
+.addp:not(.open){background:var(--prot);border-color:var(--prot);padding:0;border-radius:14px}
 .addp>.coll-head[aria-expanded="false"]{height:52px;justify-content:center;gap:8px;color:var(--on);transition:transform .12s ease}
 .addp>.coll-head[aria-expanded="false"] .chev{display:none}
 .addp>.coll-head[aria-expanded="false"] h2{flex:none;font-size:1rem;font-weight:600;color:var(--on);letter-spacing:0}
@@ -757,9 +757,53 @@ details{border-top:1px solid var(--sep)}
 .onb{background:var(--bg)}
 .onb h2{font-family:var(--font-display);font-weight:700;font-size:1.75rem;letter-spacing:-.02em}
 .onb-logo{background:var(--surface)}
+
+/* 2.0.1: плашка «готово» подстраивается под текст; ровная форма записи; дата не вылезает за край */
+.done{left:0;right:0;width:max-content;min-width:120px;max-width:min(240px,80vw);height:auto;min-height:112px;margin:-56px auto 0;padding:16px 20px;gap:8px}
+.done span{text-align:center;line-height:1.3;font-size:.8125rem}
+.ex-log{align-items:end;gap:10px;padding:14px}
+.ex-log .field{gap:6px}
+.ex-log .field label{font-size:.75rem;line-height:1.25}
+.lg-title,.mapttl,.cat-h,.mylist h3{text-transform:none;letter-spacing:0}
+.lg-title{font-size:.9375rem;font-weight:600;color:var(--fg);align-self:start}
+.lg-hint{align-self:start}
+.mapttl,.cat-h,.mylist h3{font-size:.8125rem;font-weight:600;color:var(--muted)}
+input[type="date"]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;max-width:100%;min-height:46px;text-align:left}
+input[type="date"]::-webkit-date-and-time-value{text-align:left;margin:0}
+.dtitle input[type="date"],.datepick input[type="date"]{min-height:0}
+.addp .coll-head[aria-expanded="true"] .addplus{transform:none}
+.addplus svg{transition:transform .2s ease}
+.addp .coll-head[aria-expanded="true"] .addplus svg{transform:rotate(45deg)}
+.backup .btn{white-space:normal;padding:11px 10px;line-height:1.25}
+input:focus-visible,select:focus-visible{outline:none} /* у полей своя подсветка рамкой, без второго контура */
+body.kb .tabbar{display:none} /* пока открыта клавиатура, нижнее меню не всплывает над ней */
+/* 2.0.2: доводка после проверки */
+.grid2 .full{grid-column:1 / -1}
+.dayacts .btn{white-space:normal;line-height:1.25}
+.modal-card{padding-bottom:0}
+.modal-actions{bottom:0;margin:0 -18px;padding:14px 18px 18px;background:var(--surface)}
+.modal-actions::before{content:"";position:absolute;left:0;right:0;top:-16px;height:16px;background:linear-gradient(to bottom,transparent,var(--surface));pointer-events:none}
+.modal-body{display:flex;flex-direction:column;gap:12px}
+.modal-body p+p{margin-top:0}
+.modal-body .cat-h{margin:4px 0 -4px}
+.modal-card h3.cat-h{font-size:.8125rem;font-weight:600;color:var(--muted);letter-spacing:0}
+.kpi .label{font-size:.75rem}
+.daychips{overflow:hidden}
+.daychips button{flex:1 1 0;min-width:0;padding:6px 2px;white-space:nowrap}
+.myrow .acts{gap:8px}
+.gauge-row span{white-space:nowrap}
+@media (max-width:379px){.gauge-row .goalpill{display:none}}
+body:not([data-tab="diary"]) .foot{display:none}
+.ex-w .delta.good{color:var(--ok)} .ex-w .delta.bad{color:var(--warn)}
+.goalpill,.del,.editbtn,.foot{color:var(--muted)}
+.lg.ok{background:var(--ok)}
+.split[hidden]{display:none!important}
+.gauge-row{display:flex;justify-content:space-between;align-items:center}
+.gauge-row .goalpill{flex:1;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal{background:rgba(0,0,0,.66)}
 </style>
 </head>
-<body>
+<body data-tab="diary">
 
 <div class="wrap">
   <header class="topbar">
@@ -777,8 +821,8 @@ details{border-top:1px solid var(--sep)}
 
   <!-- totals -->
   <section class="panel hero" aria-label="Итог дня">
-    <div class="gauge" aria-hidden="true">
-      <svg viewBox="0 0 300 158"><path class="gt" d="M20 150 A130 130 0 0 1 280 150"/><path class="gv" id="kRing" d="M20 150 A130 130 0 0 1 280 150"/></svg>
+    <div class="gauge">
+      <svg viewBox="0 0 300 158" aria-hidden="true"><path class="gt" d="M20 150 A130 130 0 0 1 280 150"/><path class="gv" id="kRing" d="M20 150 A130 130 0 0 1 280 150"/></svg>
       <div class="gauge-c"><b class="num" id="kBig">0</b><span class="left" id="kLeft"></span></div>
     </div>
     <div class="gauge-row num"><span>Съедено <b id="kEaten">0</b></span><span class="goalpill" id="goalPill"></span><span>Цель <b id="kTarget">—</b></span></div>
@@ -892,10 +936,10 @@ details{border-top:1px solid var(--sep)}
     <div class="ncust">
       <div class="ncust-head"><span class="label">Норма на день</span><span class="nmode" id="nMode">по формуле</span></div>
       <div class="ncust-grid">
-        <div class="field"><label for="nK">Ккал</label><input id="nK" type="number" inputmode="numeric" min="800" max="9000" step="10"></div>
-        <div class="field"><label for="nP">Белки, г</label><input id="nP" type="number" inputmode="numeric" min="0" max="600"></div>
-        <div class="field"><label for="nF">Жиры, г</label><input id="nF" type="number" inputmode="numeric" min="0" max="400"></div>
-        <div class="field"><label for="nC">Углеводы, г</label><input id="nC" type="number" inputmode="numeric" min="0" max="1500"></div>
+        <div class="field"><label for="nK">Ккал</label><input id="nK" placeholder="—" type="number" inputmode="numeric" min="800" max="9000" step="10"></div>
+        <div class="field"><label for="nP">Белки, г</label><input id="nP" placeholder="—" type="number" inputmode="numeric" min="0" max="600"></div>
+        <div class="field"><label for="nF">Жиры, г</label><input id="nF" placeholder="—" type="number" inputmode="numeric" min="0" max="400"></div>
+        <div class="field"><label for="nC">Углеводы, г</label><input id="nC" placeholder="—" type="number" inputmode="numeric" min="0" max="1500"></div>
       </div>
       <p class="hint">Цифры посчитаны по формуле для твоей цели, но их можно поменять под себя. Меняешь калории — подстроятся углеводы. Меняешь белки, жиры или углеводы — пересчитаются калории (белки и углеводы по 4 ккал на грамм, жиры 9).</p>
       <p class="lg-warn" id="nWarn" hidden></p>
@@ -903,39 +947,40 @@ details{border-top:1px solid var(--sep)}
     </div>
     <div class="grid2">
       <div class="field"><label for="sex">Пол</label><select id="sex"><option value="" disabled>Не указан</option><option value="m">Мужской</option><option value="f">Женский</option></select></div>
-      <div class="field"><label for="age">Возраст</label><input id="age" type="number" min="14" max="90"></div>
-      <div class="field"><label for="h">Рост, см</label><input id="h" type="number" min="120" max="230"></div>
-      <div class="field"><label for="w">Вес, кг</label><input id="w" type="number" step="0.1" min="35" max="250"></div>
-      <div class="field"><label for="act">Активность</label>
+      <div class="field"><label for="age">Возраст</label><input id="age" type="number" inputmode="numeric" min="12" max="100"></div>
+      <div class="field"><label for="h">Рост, см</label><input id="h" type="number" inputmode="numeric" min="120" max="230"></div>
+      <div class="field"><label for="w">Вес, кг</label><input id="w" type="number" inputmode="decimal" step="0.1" min="25" max="350"></div>
+      <div class="field full"><label for="act">Активность</label>
         <select id="act">
           <optgroup label="Сидячая работа">
-            <option value="1.2">Без спорта</option>
-            <option value="1.375">+ 1–2 тренировки в неделю</option>
-            <option value="1.45">+ 3 тренировки в неделю</option>
-            <option value="1.55">+ 4–5 тренировок в неделю</option>
+            <option value="1.2">Сидячая работа, без спорта</option>
+            <option value="1.375">Сидячая работа + 1–2 тренировки</option>
+            <option value="1.45">Сидячая работа + 3 тренировки</option>
+            <option value="1.55">Сидячая работа + 4–5 тренировок</option>
           </optgroup>
           <optgroup label="Работа на ногах">
-            <option value="1.4">Без спорта</option>
-            <option value="1.5">+ 1–2 тренировки в неделю</option>
-            <option value="1.6">+ 3 тренировки в неделю</option>
+            <option value="1.4">Работа на ногах, без спорта</option>
+            <option value="1.5">На ногах + 1–2 тренировки</option>
+            <option value="1.6">На ногах + 3 тренировки</option>
           </optgroup>
           <optgroup label="Физический труд">
-            <option value="1.725">Тяжёлая работа</option>
+            <option value="1.725">Тяжёлый физический труд</option>
           </optgroup>
         </select></div>
-      <div class="field"><label for="goal">Цель</label>
+      <div class="field full"><label for="goal">Цель</label>
         <select id="goal">
           <option value="recomp">Рекомпозиция (поддержание)</option>
           <option value="gain">Набор массы (+250 ккал)</option>
           <option value="cut">Сушка (дефицит 10%)</option>
           <option value="lose">Похудение (дефицит 20%)</option>
         </select></div>
-      <div class="field"><label for="exp">Опыт в зале</label>
+      <div class="field full"><label for="exp">Опыт в зале</label>
         <select id="exp">
-          <option value="nov">Новичок (до 6 месяцев)</option>
-          <option value="mid">Средний (от полугода до 2 лет)</option>
-          <option value="adv">Опытный (больше 2 лет)</option>
+          <option value="nov">Новичок · до 6 месяцев</option>
+          <option value="mid">Средний · от полугода до 2 лет</option>
+          <option value="adv">Опытный · больше 2 лет</option>
         </select></div>
+    <p class="lg-warn" id="pWarn" role="alert" hidden></p>
     </div>
     </div>
   </section>
@@ -1056,26 +1101,26 @@ details{border-top:1px solid var(--sep)}
         <div class="field"><label for="obAge">Возраст</label><input id="obAge" type="number" inputmode="numeric" min="12" max="100" placeholder="лет"></div>
         <div class="field"><label for="obW">Вес, кг</label><input id="obW" type="number" inputmode="decimal" step="0.1" min="25" max="350" placeholder="кг"></div>
         <div class="field"><label for="obH">Рост, см</label><input id="obH" type="number" inputmode="numeric" min="120" max="230" placeholder="см"></div>
-        <div class="field"><label for="obExp">Опыт в зале</label><select id="obExp">
-          <option value="nov">Новичок (до 6 месяцев)</option>
-          <option value="mid">Средний (от полугода до 2 лет)</option>
-          <option value="adv">Опытный (больше 2 лет)</option>
+        <div class="field full"><label for="obExp">Опыт в зале</label><select id="obExp">
+          <option value="nov">Новичок · до 6 месяцев</option>
+          <option value="mid">Средний · от полугода до 2 лет</option>
+          <option value="adv">Опытный · больше 2 лет</option>
         </select></div>
       </div>
       <div class="field"><label for="obAct">Образ жизни</label><select id="obAct">
           <optgroup label="Сидячая работа">
-            <option value="1.2">Без спорта</option>
-            <option value="1.375">+ 1–2 тренировки в неделю</option>
-            <option value="1.45">+ 3 тренировки в неделю</option>
-            <option value="1.55">+ 4–5 тренировок в неделю</option>
+            <option value="1.2">Сидячая работа, без спорта</option>
+            <option value="1.375">Сидячая работа + 1–2 тренировки</option>
+            <option value="1.45">Сидячая работа + 3 тренировки</option>
+            <option value="1.55">Сидячая работа + 4–5 тренировок</option>
           </optgroup>
           <optgroup label="Работа на ногах">
-            <option value="1.4">Без спорта</option>
-            <option value="1.5">+ 1–2 тренировки в неделю</option>
-            <option value="1.6">+ 3 тренировки в неделю</option>
+            <option value="1.4">Работа на ногах, без спорта</option>
+            <option value="1.5">На ногах + 1–2 тренировки</option>
+            <option value="1.6">На ногах + 3 тренировки</option>
           </optgroup>
           <optgroup label="Физический труд">
-            <option value="1.725">Тяжёлая работа</option>
+            <option value="1.725">Тяжёлый физический труд</option>
           </optgroup>
         </select></div>
       <div class="field"><label for="obGoal">Цель</label><select id="obGoal">
@@ -1484,7 +1529,9 @@ const S = {
 };
 let todayKey = new Date().toLocaleDateString("sv-SE"); // обновляется в checkDay(), если приложение открыто через полночь
 const DEF = {sex:"",age:"",h:"",w:"",act:"1.45",goal:"recomp",exp:"nov"};
-const profileOK=()=>!!settings.sex && +settings.age>=12 && +settings.h>=120 && +settings.w>=25;
+const PLIM={age:[12,100,"Возраст — от 12 до 100 лет."],h:[120,230,"Рост — от 120 до 230 см."],w:[25,350,"Вес — от 25 до 350 кг."]};
+const inLim=(k,v)=>+v>=PLIM[k][0]&&+v<=PLIM[k][1];
+const profileOK=()=>!!settings.sex && inLim("age",settings.age) && inLim("h",settings.h) && inLim("w",settings.w);
 let settings = Object.assign({}, DEF, S.get("settings",{}));
 let custom = S.get("custom",[]);
 let cdel = S.get("cdel",{}); // удалённые свои продукты: id → время удаления (чтобы удаление доходило до других устройств)
@@ -1529,7 +1576,7 @@ function mk(id,amt,mode){
   const m = pr.per ? amt : g/100, q=x=>Math.round((+x||0)*m*100)/100; // округляем до сотых: меньше места в памяти телефона
   return {pid:pr.id, n:pr.n, amt, unit: mode==="u"?pr.u.n:"г", g: g==null?null:Math.round(g*10)/10, k:q(pr.k), p:q(pr.p), f:q(pr.f), c:q(pr.c)};
 }
-const r=x=>Math.round(x), r1=x=>Math.round(x*10)/10;
+const r=x=>Math.round(x), r1=x=>Math.round(x*10)/10, nf=x=>Math.round(x).toLocaleString("ru-RU"); // nf: 2 480 с пробелом, как в итоге дня
 
 function normAuto(){
   if(!profileOK()) return null;
@@ -1555,7 +1602,7 @@ function fillCust(n){
   const a=document.activeElement;
   [["nK","k"],["nP","p"],["nF","f"],["nC","c"]].forEach(([id,k])=>{ const el=document.getElementById(id); if(el!==a) el.value = n ? n[k] : ""; });
   const man=!!(n&&n.manual);
-  const m=document.getElementById("nMode"); m.textContent = man ? "своя" : "по формуле"; m.classList.toggle("own",man);
+  const m=document.getElementById("nMode"); m.textContent = man ? "своя" : n ? "по формуле" : "не рассчитана"; m.classList.toggle("own",man);
   document.getElementById("nReset").hidden=!man || !normAuto();
 }
 function renderNorm(){
@@ -1572,7 +1619,7 @@ function renderNorm(){
      <div><span class="label">Жиры</span><b>${n.f} г</b></div>
      <div><span class="label">Углеводы</span><b>${n.c} г</b></div>`;
   const gl={recomp:"рекомпозиция",gain:"набор",cut:"сушка",lose:"похудение"}[settings.goal]||"";
-  document.getElementById("normSum").textContent=`${n.k} ккал${n.manual?" · своя":""}`;
+  document.getElementById("normSum").textContent=`${nf(n.k)} ккал${n.manual?" · своя":""}`;
   if(n.manual && !n.tdee){ document.getElementById("normHint").textContent="Своя норма. Чтобы сравнить её с расчётом и увидеть дефицит или профицит, заполни пол, возраст, рост и вес ниже."; return n; }
   const diff=n.k-n.tdee, wk=Math.abs(diff)*7/7700;
   const fmt=x=>x.toLocaleString("ru-RU",{maximumFractionDigits:1});
@@ -1592,7 +1639,7 @@ function render(){
   const sp=x=>Math.round(x).toLocaleString("ru-RU");
   document.getElementById("kEaten").textContent=sp(t.k);
   document.getElementById("kTarget").textContent=noNorm?"—":sp(n.k);
-  const left=n.k-t.k, kl=document.getElementById("kLeft"), over=!noNorm&&left<0;
+  const left=n.k-Math.round(t.k), kl=document.getElementById("kLeft"), over=!noNorm&&left<0;
   document.getElementById("kBig").textContent = noNorm ? sp(t.k) : sp(Math.abs(left));
   kl.textContent= noNorm ? "ккал съедено" : over ? "ккал сверх нормы" : "ккал осталось";
   kl.className="left"+(over?" over":"");
@@ -1618,7 +1665,7 @@ function render(){
     <div class="item">
       <div class="name">${esc(i.n)}${adv?`<button class="warnbtn" type="button" data-tip="${ix}" aria-label="Совет по продукту" aria-expanded="false">${WARN_SVG}</button>`:''}
         <small class="num">${i.unit==="г"?r(i.g)+" г":esc(i.amt+" "+i.unit)+(i.g?" · "+r(i.g)+" г":"")}<span class="mac"><i class="mp">Б ${r(i.p)}</i><i class="mf">Ж ${r(i.f)}</i><i class="mc">У ${r(i.c)}</i></span></small></div>
-      <div class="k num">${r(i.k)} ккал</div>
+      <div class="k num">${nf(i.k)} ккал</div>
       <div class="acts"><button class="editbtn" type="button" data-edit="${ix}" aria-label="Изменить ${esc(i.n)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="del" type="button" data-ix="${ix}" aria-label="Удалить ${esc(i.n)}">×</button></div>
       ${editIx===ix?editRow(i,ix):''}
       ${adv?`<div class="itip" id="itip${ix}" hidden>${esc(adv)}</div>`:''}
@@ -1770,6 +1817,10 @@ document.getElementById("list").addEventListener("click",e=>{
 });
 // ---------- модальное окно, очистка и перенос дня
 const modal=document.getElementById("modal");
+// клавиатура на телефоне: прячем нижнее меню, чтобы оно не висело над клавиатурой и не закрывало форму
+const isField=el=>!!el&&/^(INPUT|TEXTAREA)$/.test(el.tagName)&&!/^(checkbox|radio|file|button|submit|date|time|month|week|datetime-local|range|color)$/.test(el.type||"");
+document.addEventListener("focusin",e=>{ if(isField(e.target)) document.body.classList.add("kb"); });
+document.addEventListener("focusout",()=>setTimeout(()=>{ if(!isField(document.activeElement)) document.body.classList.remove("kb"); },120));
 document.addEventListener("focusout",e=>{
   if(!/^(INPUT|SELECT|TEXTAREA)$/.test((e.target||{}).tagName||"")) return;
   setTimeout(()=>{ const a=document.activeElement; if(a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)) return;
@@ -1785,9 +1836,10 @@ function openModal(title,body,actions){
 }
 function closeModal(){ modal.hidden=true; document.body.style.overflow=""; }
 modal.addEventListener("click",e=>{ if(e.target===modal) closeModal(); });
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!modal.hidden) closeModal(); });
-function dayName(key){
-  const [y,m,d]=key.split("-").map(Number); const lbl=new Date(y,m-1,d).toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+document.addEventListener("keydown",e=>{ if(e.key!=="Escape") return; if(!modal.hidden) closeModal(); else if(!document.getElementById("scan").hidden) closeScanner(); });
+function dayName(key,acc){
+  const [y,m,d]=key.split("-").map(Number); let lbl=new Date(y,m-1,d).toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+  if(acc) lbl=lbl.replace(/^(среда|пятница|суббота)/,w=>({среда:"среду",пятница:"пятницу",суббота:"субботу"})[w]); // «за среду», «на пятницу»
   return key===todayKey ? "сегодня, "+lbl : key===shiftDay(todayKey,-1) ? "вчера, "+lbl : lbl;
 }
 const kcalOf=items=>r(items.reduce((a,i)=>a+i.k,0));
@@ -1795,7 +1847,7 @@ function plural(n,a,b,c){ n=Math.abs(n)%100; const n1=n%10; if(n>10&&n<20) retur
 document.getElementById("clearBtn").addEventListener("click",()=>{
   const n=diary.items.length; if(!n) return;
   openModal(cur===todayKey?"Очистить сегодняшний день?":"Очистить этот день?",
-    `<p>Будут удалены все записи за ${esc(dayName(cur))}: ${n} ${plural(n,"запись","записи","записей")}, ${kcalOf(diary.items)} ккал. Отменить это действие нельзя.</p>`,
+    `<p>Будут удалены все записи за ${esc(dayName(cur,1))}: ${n} ${plural(n,"запись","записи","записей")}, ${kcalOf(diary.items)} ккал. Отменить это действие нельзя.</p>`,
     [{label:"Отмена"},{label:"Да, очистить",cls:"danger",fn:()=>{ diary.items=[]; editIx=-1; render(); }}]);
 });
 function copyFrom(src){
@@ -1803,7 +1855,7 @@ function copyFrom(src){
   const doCopy=replace=>{ const copy=JSON.parse(JSON.stringify(items)); diary.items = replace ? copy : diary.items.concat(copy); editIx=-1; render(); done("Перенесено"); };
   if(!diary.items.length){ doCopy(true); return; }
   openModal("На этот день уже есть записи",
-    `<p>За ${esc(dayName(cur))} уже ${diary.items.length} ${plural(diary.items.length,"запись","записи","записей")}. Добавить записи за ${esc(dayName(src))} к ним или заменить?</p>`,
+    `<p>За ${esc(dayName(cur,1))} уже ${diary.items.length} ${plural(diary.items.length,"запись","записи","записей")}. Добавить записи за ${esc(dayName(src,1))} к ним или заменить?</p>`,
     [{label:"Отмена"},{label:"Заменить",cls:"danger",fn:()=>doCopy(true)},{label:"Добавить",cls:"",fn:()=>doCopy(false)}]);
 }
 document.getElementById("copyBtn").addEventListener("click",()=>{
@@ -1811,7 +1863,7 @@ document.getElementById("copyBtn").addEventListener("click",()=>{
   const list = keys.length
     ? `<div class="daypick">${keys.map(k=>`<button type="button" data-src="${k}"><span>${esc(dayName(k).replace(/^./,c=>c.toUpperCase()))}</span><small class="num">${days[k].items.length} ${plural(days[k].items.length,"запись","записи","записей")} · ${kcalOf(days[k].items)} ккал</small></button>`).join("")}</div>`
     : `<p>Пока нет других дней с записями.</p>`;
-  openModal(`Перенести записи на ${dayName(cur)}`,
+  openModal(`Перенести записи на ${dayName(cur,1)}`,
     `<p>Выбери день, с которого скопировать всю еду.</p>${list}
      <div class="otherday"><div class="field"><label for="srcDate">Другая дата</label><input type="date" id="srcDate" max="${todayKey}"></div><button class="btn" type="button" id="srcGo">Выбрать</button></div>
      <p class="hint" id="srcMsg"></p>`,
@@ -1829,7 +1881,8 @@ document.getElementById("customForm").addEventListener("submit",e=>{
   e.preventDefault();
   const g=id=>parseFloat(document.getElementById(id).value)||0;
   const p={id:"c"+Date.now(), n:document.getElementById("cName").value.trim(), k:g("cK"),p:g("cP"),f:g("cF"),c:g("cC"), t:Date.now()};
-  const ug=g("cUg"); if(ug>0) p.u={n:document.getElementById("cUn").value.trim().slice(0,20)||"порц.", g:ug};
+  const ug=g("cUg"); if(document.getElementById("cUn").value.trim() && !(ug>0)){ scanStatus.textContent="Укажи вес порции в граммах — или очисти её название, если порция не нужна."; document.getElementById("cUg").focus(); return; }
+  if(ug>0) p.u={n:document.getElementById("cUn").value.trim().slice(0,20)||"порц.", g:ug};
   if(!p.n){ scanStatus.textContent="Впиши название продукта."; document.getElementById("cName").focus(); return; }
   const bad = [p.k,p.p,p.f,p.c].some(x=>x<0) ? "Значения не могут быть отрицательными."
     : p.k>1000 ? "Больше 1000 ккал на 100 г не бывает — проверь цифры (на этикетке иногда пишут кДж)."
@@ -1849,6 +1902,8 @@ document.getElementById("customForm").addEventListener("submit",e=>{
 for(const id of ["sex","age","h","w","act","goal","exp"]){
   const el=document.getElementById(id); el.value=settings[id];
   el.addEventListener("input",()=>{
+    if(PLIM[id]){ const bad = el.value!=="" && !inLim(id,el.value), wn=document.getElementById("pWarn"); el.classList.toggle("invalid",bad); wn.hidden=!bad; wn.textContent=bad?PLIM[id][2]:"";
+      if(bad) return; } // явная опечатка (возраст 200, вес 1000) не сохраняется и не ломает норму
     if(id==="goal" && settings.cust){ delete settings.cust; done("Норма пересчитана"); } // новая цель — новая норма по формуле
     settings[id]=el.value; S.set("settings",settings); render(); if(typeof renderTrain==="function"&&curTab==="train") renderTrain();});
 }
@@ -1877,9 +1932,10 @@ const WARN_SVG='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="tru
 const INFO_SVG='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="currentColor"/><path d="M12 11v6" stroke="var(--surface)" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.6" r="1.2" fill="var(--surface)"/></svg>';
 const OK_SVG='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="currentColor"/><path d="m7.5 12.3 3 3 6-6.3" stroke="var(--surface)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function prodOf(i){ return (i.pid&&byId(i.pid)) || all().find(p=>p.n===i.n) || null; }
-const GROUPS=[[/пиво/,"beer"],[/конфет|сахар|мороженое|сгущ/,"sweet"],[/майонез/,"mayo"],[/масло/,"oil"],[/гейнер/,"gainer"],[/орех/,"nuts"],[/фри/,"fries"],
- [/колбас|сервелат|грудинка|шпикач|сосиск|сардел|купат|паштет|балык|докторск/,"sausage"],[/пельмен|хинкали|вареник|чебурек|блин/,"dough"],
- [/котлет|отбивн|кордон|бифштекс|зраз|фарш|тефтел|фрикадел|крыл/,"cutlet"],[/сыр(?!ник)/,"cheese"]];
+// порядок важен: первая подходящая группа. «без сахара», «безалкогольное», «сырая», «фрикадельки», «с маслом» — не повод для совета
+const GROUPS=[[/^(?!.*безалк).*пиво/,"beer"],[/конфет|сахар|мороженое|сгущ/,"sweet"],[/майонез/,"mayo"],[/масло(?![а-яё])/,"oil"],[/гейнер/,"gainer"],
+ [/колбас|сервелат|грудинка|бекон|шпикач|сосиск|сардел|купат|паштет|балык|докторск/,"sausage"],[/орех/,"nuts"],[/фри(?!кад)/,"fries"],[/пельмен|хинкали|вареник|чебурек|блин/,"dough"],
+ [/котлет|отбивн|кордон|бифштекс|зраз|фарш|тефтел|фрикадел|крыл/,"cutlet"],[/сыр(?!ник|ок|ая|ой|ое|ые|ую|н)/,"cheese"]];
 const ADVICE={
  sausage:{lose:"Колбасы и сосиски — много жира и мало белка. Замени на запечённую куриную грудку, ветчину из курицы или индейки, или хотя бы на докторскую «Ближние Горки» (174 ккал на 100 г против 400+ у сервелата).",
           recomp:"Колбаса даёт больше жира, чем белка. Для рекомпозиции лучше куриная грудка, индейка или нежирная ветчина."},
@@ -1912,7 +1968,7 @@ const ADVICE={
 function goalKey(){ const g=settings.goal; return g==="cut"||g==="lose" ? "lose" : g; }
 function adviceFor(pr){
   if(!pr) return null;
-  const g=goalKey(), nm=nz(pr.n);
+  const g=goalKey(), nm=nz(pr.n).replace(/без сахара/g,"");
   let key=null; for(const [re,k] of GROUPS){ if(re.test(nm)){ key=k; break; } }
   if(!key && (pr.cat===9||pr.cat===13)) key="fastfood";
   if(pr.cat===8 && key!=="gainer") return null;
@@ -1949,7 +2005,7 @@ function renderTips(t,n){
   if(late && t.p<n.p*0.7) tips.push(["warn",`Белка пока ${r(t.p)} из ${n.p} г. Добери: порция протеина (≈22 г), пачка творога 2% (≈34 г), 150 г куриной грудки (≈45 г) или 3 яйца (≈21 г).`]);
   if(t.f>n.f*1.15) tips.push(["warn",`Жиров ${r(t.f)} г при норме ${n.f} г. Больше всего дали: ${top("f",2)}.`]);
   const flagged=items.filter(i=>adviceFor(prodOf(i))).length;
-  if(flagged && tips.length<3) tips.push(["info",`Продуктов с жёлтым значком: ${flagged}. Нажми на значок рядом с названием, чтобы увидеть, чем их заменить.`]);
+  if(flagged && tips.length<3) tips.push(["info",`Продуктов со значком ⚠: ${flagged}. Нажми на значок рядом с названием, чтобы увидеть, чем их заменить.`]);
   if(!tips.length){
     if(t.p>=n.p*0.9 && Math.abs(t.k-n.k)<=n.k*0.1) tips.push(["ok","Отличный день: калории и белок в норме. Так держать."]);
     else tips.push(["ok","Пока всё в порядке. Если что-то пойдёт не так, совет появится здесь."]);
@@ -2055,7 +2111,7 @@ document.getElementById("myAdd").addEventListener("click",()=>{ setCustomEditMod
 // ---------- сворачиваемые разделы
 function setColl(panel,open){
   const h=panel.querySelector(".coll-head"), body=panel.querySelector(".coll-body");
-  h.setAttribute("aria-expanded",String(open)); body.hidden=!open;
+  h.setAttribute("aria-expanded",String(open)); body.hidden=!open; panel.classList.toggle("open",open);
   try{ const st=JSON.parse(localStorage.getItem("bzhu_coll")||"{}"); st[panel.id]=open; localStorage.setItem("bzhu_coll",JSON.stringify(st)); }catch(e){}
 }
 document.querySelectorAll(".coll").forEach(pn=>{
@@ -2094,16 +2150,22 @@ document.getElementById("importFile").addEventListener("change",e=>{
         if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||!isObj(v)||!Array.isArray(v.items)) throw 0;
         const items=v.items.filter(i=>isObj(i)&&typeof i.n==="string"&&okNum(i.k)&&okNum(i.p)&&okNum(i.f)&&okNum(i.c));
         if(items.length) nd[k]={items}; }
-      const nc=Array.isArray(d.custom)?d.custom.filter(p=>isObj(p)&&p.id&&typeof p.n==="string"&&okNum(+p.k)):[];
+      const okId=x=>typeof x==="string"&&/^[\w-]{1,40}$/.test(x), numF=x=>{ x=+x; return isFinite(x)?x:0; };
+      const nc=Array.isArray(d.custom)?d.custom.filter(p=>isObj(p)&&okId(p.id)&&typeof p.n==="string"&&okNum(+p.k)).map(p=>{ const q={id:p.id,n:p.n.slice(0,120),k:numF(p.k),p:numF(p.p),f:numF(p.f),c:numF(p.c)};
+        if(p.code&&/^\d{8,14}$/.test(p.code)) q.code=p.code; if(isObj(p.u)&&numF(p.u.g)>0) q.u={n:String(p.u.n||"порц.").slice(0,20),g:numF(p.u.g)}; return q; }):[];
       if(d.train!=null && (!isObj(d.train)||(d.train.ex!=null&&!Array.isArray(d.train.ex)))) throw 0;
-      if(isObj(d.settings)) settings=Object.assign({},DEF,d.settings); // в файле нет анкеты — свою не стираем
+      if(isObj(d.settings)) settings=Object.assign({},DEF,{theme:settings.theme},d.settings); // в файле нет анкеты — свою не стираем; нет темы — оставляем текущую
       const ts=Date.now(); nc.forEach(p=>{ p.t=ts; delete cdel[p.id]; }); // восстановленные продукты не должны снова удалиться синхронизацией
       custom=mergeCustom(custom,nc,{},{}).list.map(p=>nc.find(x=>x.id===p.id)||p); S.set("cdel",cdel);
       days=Object.assign({},days,nd); diary=days[cur]||(days[cur]={items:[]}); editIx=-1;
       if(isObj(d.uover)){ uover=d.uover; S.set("uover",uover); applyOverrides(); }
       if(isObj(d.body)){ body=Object.assign({},body,d.body); S.set("body",body); }
-      if(d.train){ train=Object.assign({ex:[],log:{},pr:{}},d.train); if(!isObj(train.log)) train.log={}; if(!isObj(train.pr)) train.pr={}; migrateTrain(); S.set("train",train); if(curTab==="train") renderTrain(); }
-      S.set("settings",settings); S.set("custom",custom);
+      if(d.train){ train=Object.assign({ex:[],log:{},pr:{}},d.train); if(!isObj(train.log)) train.log={}; if(!isObj(train.pr)) train.pr={};
+        // в истории только числа и простые id — файл не должен подсовывать в страницу посторонний код
+        train.ex=train.ex.filter(e=>isObj(e)&&okId(e.id)&&typeof e.n==="string").map(e=>Object.assign({},e,{n:e.n.slice(0,80),cat:okId(e.cat)?e.cat:undefined,t:["w","g","b","a"].includes(e.t)?e.t:"w",days:Array.isArray(e.days)?e.days.filter(x=>Number.isInteger(x)&&x>=0&&x<7):[]}));
+        const cleanL=o=>{ const out={}; for(const k in o){ if(!okId(k)||!Array.isArray(o[k])) continue; out[k]=o[k].filter(e=>isObj(e)&&/^\d{4}-\d{2}-\d{2}$/.test(e.d)).map(e=>{ const q={d:e.d,w:numF(e.w),r:Math.max(0,Math.round(numF(e.r)))}; if(e.s!=null) q.s=Math.max(1,Math.round(numF(e.s))); if(["a","b","x"].includes(e.m)) q.m=e.m; return q; }); } return out; };
+        train.log=cleanL(train.log); train.pr=cleanL(train.pr); if(!isObj(train.ord)) delete train.ord; migrateTrain(); S.set("train",train); if(curTab==="train") renderTrain(); }
+      S.set("settings",settings); S.set("custom",custom); applyTheme(); renderThemePick();
       for(const id of ["sex","age","h","w","act","goal","exp"]) document.getElementById(id).value=settings[id];
       fillProducts(); render(); renderMyList(); msg("Данные загружены.");
     }catch(err){ msg("Это не файл резервной копии дневника. Выбери файл bzhu-backup-….json."); }
@@ -2249,7 +2311,7 @@ let body=S.get("body",{});
 const fmt1=x=>(Math.round(x*10)/10).toLocaleString("ru-RU",{maximumFractionDigits:1});
 const keyToDate=k=>{const [y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d);};
 const shortDate=k=>keyToDate(k).toLocaleDateString("ru-RU",{day:"numeric",month:"short"}).replace(".","");
-const APP_VERSION="2.0.1"; // формат: глобальные изменения . новые функции . исправления
+const APP_VERSION="2.0.2"; // формат: глобальные изменения . новые функции . исправления
 document.getElementById("appVer").textContent=APP_VERSION;
 var trSort=false; if(!document.body.dataset.tab) document.body.dataset.tab="diary";
 window.addEventListener("scroll",()=>{ const t=document.getElementById("trTop"); if(t) t.classList.toggle("stuck", window.scrollY>6); },{passive:true});
@@ -2287,8 +2349,9 @@ function segBind(id,fn){ const el=document.getElementById(id); el.addEventListen
 
 // ---------- chart helpers (SVG, one scale per chart)
 function niceTicks(lo,hi,n){ const span=hi-lo||1, step0=span/n, mag=Math.pow(10,Math.floor(Math.log10(step0))); const step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=step0); const a=Math.floor(lo/step)*step, b=Math.ceil(hi/step)*step; const t=[]; for(let v=a; v<=b+1e-9; v+=step) t.push(+v.toFixed(6)||0); return t; }
-function lineChart(pts,color,unit){
-  if(pts.length<2) return `<div class="chartempty">${pts.length? "Нужно хотя бы 2 замера, чтобы построить график" : "Пока нет замеров за этот период"}</div>`;
+function lineChart(pts,color,unit,kind){
+  const w2=kind==="rec"?["записи","записей"]:["замера","замеров"];
+  if(pts.length<2) return `<div class="chartempty">${pts.length? `Нужно хотя бы 2 ${w2[0]}, чтобы построить график` : `Пока нет ${w2[1]} за этот период`}</div>`;
   const W=340,H=190,L=34,R=14,T=14,B=26;
   const xs=pts.map(p=>keyToDate(p.k).getTime()), ys=pts.map(p=>p.v);
   let lo=Math.min(...ys), hi=Math.max(...ys); const pad=Math.max(.3,(hi-lo)*.15); lo-=pad; hi+=pad;
@@ -2296,7 +2359,8 @@ function lineChart(pts,color,unit){
   const x0=Math.min(...xs), x1=Math.max(...xs);
   const X=t=>L+(x1===x0?0.5:(t-x0)/(x1-x0))*(W-L-R), Y=v=>T+(1-(v-lo)/(hi-lo))*(H-T-B);
   let g=ticks.map(v=>`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${L-6}" y="${Y(v)+3.5}" text-anchor="end">${fmt1(v)}</text>`).join("");
-  const xl=[0,Math.floor((pts.length-1)/2),pts.length-1].filter((v,i,a)=>a.indexOf(v)===i);
+  const xl=[0,Math.floor((pts.length-1)/2),pts.length-1].filter((v,i,a)=>a.indexOf(v)===i)
+    .filter((v,i,a)=>!(i===1&&a.length===3&&(X(xs[v])-X(xs[0])<62||X(xs[a[2]])-X(xs[v])<62))); // средняя дата — только если не налезает на крайние
   g+=xl.map(i=>`<text class="ax" x="${X(xs[i])}" y="${H-8}" text-anchor="${i===0?"start":i===pts.length-1?"end":"middle"}">${shortDate(pts[i].k)}</text>`).join("");
   const path=pts.map((p,i)=>(i?"L":"M")+X(xs[i]).toFixed(1)+" "+Y(p.v).toFixed(1)).join(" ");
   const area=path+` L${X(xs[xs.length-1]).toFixed(1)} ${H-B} L${X(xs[0]).toFixed(1)} ${H-B} Z`;
@@ -2319,10 +2383,10 @@ function barChart(rows,target){
   const Y=v=>T+(1-v/hi)*(H-T-B), bw=(W-L-R)/rows.length, gap=Math.min(6,bw*.28);
   let g=ticks.map(v=>`<line class="gl" x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${L-6}" y="${Y(v)+3.5}" text-anchor="end">${v>=1000?(v/1000).toLocaleString("ru-RU")+"k":v}</text>`).join("");
   g+=rows.map((r,i)=>{ const x=L+i*bw+gap/2, w=bw-gap, h=Math.max(r.v?2:0,(H-B)-Y(r.v));
-    const c=!r.v?"transparent":!target?cssv("--prot"):r.v>target*1.1?cssv("--warn"):r.v<target*.9?cssv("--dim"):cssv("--prot");
+    const c=!r.v?"transparent":!target?cssv("--prot"):r.v>target*1.1?cssv("--warn"):r.v<target*.9?cssv("--dim"):cssv("--ok");
     const showLbl=rows.length<=7 || i%5===0 || i===rows.length-1;
     return `<rect x="${x}" y="${(H-B)-h}" width="${w}" height="${h}" rx="${Math.min(4,w/2)}" fill="${c}"/>${showLbl?`<text class="ax" x="${x+w/2}" y="${H-8}" text-anchor="middle">${r.lbl}</text>`:""}`; }).join("");
-  if(target) g+=`<line x1="${L}" x2="${W-R}" y1="${Y(target)}" y2="${Y(target)}" stroke="${cssv("--fg")}" stroke-opacity=".45" stroke-dasharray="3 4"/><text class="ax" x="${W-R}" y="${Y(target)-5}" text-anchor="end">цель ${target}</text>`;
+  if(target) g+=`<line x1="${L}" x2="${W-R}" y1="${Y(target)}" y2="${Y(target)}" stroke="${cssv("--fg")}" stroke-opacity=".45" stroke-dasharray="3 4"/><text class="ax" x="${W-R}" y="${Y(target)-5}" text-anchor="end" paint-order="stroke" stroke="${cssv("--surface")}" stroke-width="4" stroke-linejoin="round">цель ${nf(target)}</text>`;
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Калории по дням">${g}</svg>`;
 }
 
@@ -2402,13 +2466,14 @@ function recFor(ex){
     const assist = id==="pullup" ? [.45,.15,0][lvl] : [.35,.1,0][lvl];
     if(lvl===0) { const a=Math.round(bw*assist/5)*5; return {txt:`противовес ${Math.max(5,a-5)}–${a+5} кг × 8–12`}; }
     if(lvl===1) return {txt:`свой вес × 6–12 или противовес ${Math.round(bw*assist/5)*5} кг`};
-    return {txt:`свой вес + ${Math.round(bw*.1/2.5)*2.5}–${Math.round(bw*.2/2.5)*2.5} кг × 8–10`};
+    return {txt:`свой вес + ${fmt1(Math.round(bw*.1/2.5)*2.5)}–${fmt1(Math.round(bw*.2/2.5)*2.5)} кг × 8–10`};
   }
   const r=REC[id]; if(!r) return null;
   let k = age<18?.85: age<=35?1: age<=45?.95: age<=55?.88:.8;
   if(settings.sex==="f") k*= LOWER.has(id)?.7:.55;
   if(act<=1.2) k*=.9; else if(act>=1.7) k*=1.05;
-  const one=bw*r[lvl]*k, step=r[3]==="d"?1:2.5, rnd=v=>Math.max(step,Math.round(v/step)*step);
+  const bwE = bw<=90 ? bw : 90*Math.pow(bw/90,.6); // сила растёт медленнее веса тела: при большом весе ориентир не должен улетать
+  const one=bwE*r[lvl]*k, step=r[3]==="d"?1:2.5, rnd=v=>Math.max(step,Math.round(v/step)*step);
   const bar=BAR[id]||0, lo=Math.max(bar,rnd(one*.68)), hi=Math.max(lo,rnd(one*.77));
   return {lo, hi, bar, txt:`${fmt1(lo)}${hi>lo?"–"+fmt1(hi):""} кг${r[3]==="d"?" (одна гантель)":bar?" с грифом":""} × 10–12`};
 }
@@ -2419,7 +2484,7 @@ function recInfo(ex){
   const lw=(train.log[ex.id]||[]).slice(-1)[0];
   const above = r && r.hi && lw && ex.t==="w" && lw.w>r.hi*1.1;
   openModal("Как подобрать рабочий вес", `${r?`<p class="recbig">${esc(ex.n)}: <b>${esc(r.txt)}</b></p>`:""}
-    ${above?`<p>Ты уже работаешь с весом больше ориентира, это отлично. Если тренируешься дольше полугода, поставь уровень «Средний» в разделе «Мои данные и цель», и ориентиры станут точнее.</p>`:""}
+    ${above?`<p>Ты уже работаешь с весом больше ориентира, это отлично.${settings.exp==="nov"?" Если тренируешься дольше полугода, поставь уровень «Средний» в разделе «Мои данные и цель», и ориентиры станут точнее.":settings.exp==="mid"?" Если тренируешься больше 2 лет, поставь уровень «Опытный» в разделе «Мои данные и цель».":""}</p>`:""}
     ${r&&r.bar?`<p><b>Вес указан общий, вместе с грифом.</b> ${r.bar===20?"Обычный гриф весит 20 кг":"Короткий или EZ-гриф весит около 10 кг (смотри маркировку в своём зале)"}: ${platesTxt(r.lo,r.bar)}${r.hi>r.lo?`, а для ${fmt1(r.hi)} кг — ${platesTxt(r.hi,r.bar,true)}`:""}. Записывай вес так же — вместе с грифом.</p>`:""}
     <p>Это примерный ориентир. Он рассчитан по средним силовым нормативам для твоих данных: ${sx}, ${settings.age} ${plural(+settings.age,"год","года","лет")}, ${settings.w} кг, ${esc(ex2)}. Поменять данные можно в разделе «Мои данные и цель» на вкладке «Дневник».</p>
     <p>Силы у всех разные, поэтому окончательно подбирай вес по ощущениям. Правильный рабочий вес — такой, при котором последние 2–3 повторения в подходе даются тяжело, но техника остаётся чистой. Именно такая работа на пределе своих возможностей даёт основной результат.</p>
@@ -2630,7 +2695,7 @@ const ANIM={
  cablecrunch:{an:["K1",56,104],eq:[{t:"floor",y:108,x0:10,x1:140},{t:"handle",ext:2},{t:"cable",x:74,y:-20}],
    A:{t:-78,uaR:50,uab:22,faR:-72,fab:-25,th:90,thb:6,sh:180,ft:175},B:{t:22,hd:15,uaR:50,uab:22,faR:-72,fab:-25,th:98,thb:6,sh:180,ft:175}}
 };
-function lerpPose(a,b,k){ const o={}; for(const key in a){ o[key]= (b[key]!=null && typeof a[key]==="number") ? a[key]+(b[key]-a[key])*k : a[key]; } return o; }
+function lerpPose(a,b,k){ const o={}; for(const key of new Set([...Object.keys(a),...Object.keys(b)])){ const x=a[key]!=null?a[key]:(typeof b[key]==="number"?0:b[key]), y=b[key]!=null?b[key]:x; o[key]= typeof x==="number"&&typeof y==="number" ? x+(y-x)*k : x; } return o; }
 function poseAt(def,k){ return def.M ? (k<.5 ? lerpPose(def.A,def.M,k*2) : lerpPose(def.M,def.B,k*2-1)) : lerpPose(def.A,def.B,k); }
 function placed(def,k){
   const q=poseAt(def,k), P=rig3(q); const [n,ax,ay]=def.an, dx=ax-P[n][0], dy=ay-P[n][1];
@@ -2779,7 +2844,7 @@ const EXICON={barbell:'<path d="M2.5 12h19"/><rect x="5" y="7" width="3" height=
  pullbar:'<path d="M3 6h18M5 6v15M19 6v15"/><path d="M9.5 6v3.5M14.5 6v3.5"/>',
  dips:'<path d="M3 9h7M14 9h7M4.5 9v11M8.5 9v11M15.5 9v11M19.5 9v11"/>',
  mat:'<rect x="3" y="14" width="18" height="5" rx="2.5"/><circle cx="17" cy="8" r="2.2"/><path d="M15 10.5 8 12.5"/>',
- custom:'<path d="M12 5v14M5 12h14"/>'};
+ custom:'<circle cx="12" cy="14.5" r="5.5"/><path d="M9 9.8V8a3 3 0 0 1 6 0v1.8"/>'};
 const EXEQ={squat:"barbell",rdl:"barbell",deadlift:"barbell",bench:"barbell",incline:"barbell",bbrow:"barbell",ohp:"barbell",uprow:"barbell",bbcurl:"barbell",french:"barbell",closegrip:"barbell",wrist:"barbell",
  lunge:"dumbbell",dbbench:"dumbbell",dbincline:"dumbbell",dbrow:"dumbbell",dbpress:"dumbbell",lateral:"dumbbell",inclcurl:"dumbbell",hammer:"dumbbell",ohtri:"dumbbell",
  legpress:"machine",legext:"machine",legcurl:"machine",calf:"machine",fly:"machine",revfly:"machine",hyper:"machine",
@@ -2801,9 +2866,9 @@ function showTech(id){
   const ease=x=>(1-Math.cos(Math.PI*x))/2;
   const phase=t=>{ const u=(t%per)/per; return u<.4 ? ease(u/.4) : u<.5 ? 1 : u<.9 ? 1-ease((u-.5)/.4) : 0; };
   cancelAnimationFrame(techRaf);
-  const tick=now=>{ if(!svg.isConnected || modal.hidden) return; if(!paused) svg.innerHTML=animFrame(c,phase(now-t0)); techRaf=requestAnimationFrame(tick); };
+  const tick=now=>{ if(!svg.isConnected || modal.hidden || paused) return; svg.innerHTML=animFrame(c,phase(now-t0)); techRaf=requestAnimationFrame(tick); }; // на паузе кадры не считаем
   techRaf=requestAnimationFrame(tick);
-  tp.addEventListener("click",()=>{ paused=!paused; if(paused) tp0=performance.now(); else t0+=performance.now()-tp0;
+  tp.addEventListener("click",()=>{ paused=!paused; if(paused){ tp0=performance.now(); cancelAnimationFrame(techRaf); } else { t0+=performance.now()-tp0; techRaf=requestAnimationFrame(tick); }
     tp.classList.toggle("paused",paused); tp.querySelector(".techhint").textContent = paused ? "нажми, чтобы продолжить" : "нажми, чтобы остановить"; });
 }
 function logForm(ex,kind){
@@ -2841,7 +2906,7 @@ function renderTrain(){
   document.getElementById("trAdd").hidden = trSort;
   if(trSort && train.ex.length>=2){ renderSort(); return; }
   if(!train.ex.length){
-    list.innerHTML=`<div class="trempty"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg><b>Здесь будут твои упражнения</b><p>Нажми «Добавить» вверху, выбери, что делаешь в зале, и записывай рабочий вес после тренировки. Приложение покажет, как растут твои веса.</p></div>`;
+    list.innerHTML=`<div class="trempty"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg><b>Здесь будут твои упражнения</b><p>Нажми «+» вверху, выбери, что делаешь в зале, и записывай рабочий вес после тренировки. Приложение покажет, как растут твои веса.</p></div>`;
     return;
   }
   const items=exOrder(trDay);
@@ -2850,7 +2915,10 @@ function renderTrain(){
     const done=(last&&last.d===todayKey) || listOf(ex.id,"pr").some(e=>e.d===todayKey);
     const chk=done?`<span class="donechk${justDone===ex.id?" pop":""}" role="img" aria-label="Сегодня сделано" title="Сегодня сделано"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9.6"/><path d="m7.8 12.3 2.9 2.9 5.6-6"/></svg></span>`:"";
     let delta="";
-    if(log.length>=2){ const d=load(ex,last)-load(ex,first); delta = d!==0 ? `<span class="delta ${d>0?"good":"bad"}">${fmtDelta(ex,d)} с ${shortDate(first.d)}</span>` : `<span class="delta neutral">без изменений с ${shortDate(first.d)}</span>`; }
+    if(log.length>=2){ const d=load(ex,last)-load(ex,first), dr=(last.r||0)-(first.r||0);
+      delta = d!==0 ? `<span class="delta ${d>0?"good":"bad"}">${fmtDelta(ex,d)} с ${shortDate(first.d)}</span>`
+        : dr!==0 && ex.t!=="b" ? `<span class="delta ${dr>0?"good":"bad"}">${dr>0?"+":"−"}${Math.abs(dr)} повт. с ${shortDate(first.d)}</span>` // вес тот же, но повторов больше — это тоже прогресс
+        : `<span class="delta neutral">без изменений с ${shortDate(first.d)}</span>`; }
     const sub = last ? `${last.s||1} × ${last.r} повт. · ${shortDate(last.d)}` : "ещё не записано";
     const daysTag=(ex.days||[]).map(d=>WD[d]).join(", ");
     return `<article class="ex" data-ex="${ex.id}">
@@ -2927,25 +2995,29 @@ document.getElementById("trList").addEventListener("click",e=>{
 function openExStats(id,view){
   const ex=train.ex.find(x=>x.id===id); view=view||"work";
   const kind = view==="pr" ? "pr" : "log", l=listOf(id,kind);
-  const pts=l.map(e=>({k:e.d,v:load(ex,e)}));
+  const byMax = view==="pr" && ex.t==="w"; // рекорды с разным числом повторов сравниваем по расчётному максимуму на 1 раз
+  const val=e=>byMax ? (e1rm(e)||e.w) : load(ex,e);
+  const pts=l.map(e=>({k:e.d,v:val(e)}));
   let kp="";
   if(l.length){
-    const last=l[l.length-1], first=l[0], best=bestOf(ex,l), d=load(ex,last)-load(ex,first);
+    const last=l[l.length-1], first=l[0], best=byMax ? l.reduce((a,e)=>val(e)>val(a)?e:a) : bestOf(ex,l), d=val(last)-val(first);
     kp=`<div class="kpis">
       <div class="kpi"><span class="label">${view==="pr"?"Последний":"Сейчас"}</span>${valHtml(ex,last,1)}</div>
-      <div class="kpi"><span class="label">Прогресс</span><b class="num ${d===0?"neutral":d>0?"good":"bad"}">${fmtDelta(ex,d)}</b></div>
+      <div class="kpi"><span class="label">${byMax?"Прогресс 1ПМ":"Прогресс"}</span><b class="num ${Math.abs(d)<.05?"neutral":d>0?"good":"bad"}">${fmtDelta(ex,Math.round(d*10)/10)}</b></div>
       <div class="kpi"><span class="label">${view==="pr"?"Лучший":"Лучший"}</span>${valHtml(ex,best,1)}</div>
     </div>`;
     if(view==="work" && ex.t==="w" && e1rm(last)) kp+=`<p class="hint">По рабочему весу твой максимум на 1 раз примерно <b>${fmt1(e1rm(last))} кг</b>. Это оценка по формуле, настоящий максимум проверяй только со страхующим и записывай кнопкой «Рекорд».</p>`;
   }
   const seg=`<div class="seg wide" id="exView"><button type="button" data-v="work" class="${view==="work"?"on":""}">Рабочий вес</button><button type="button" data-v="pr" class="${view==="pr"?"on":""}">Рекорды</button></div>`;
-  const hint = (ex.t==="g"||ex.t==="a") && l.length ? `<p class="hint">Ноль на графике — свой вес. Ниже нуля — с противовесом, выше — с дополнительным весом. Линия идёт вверх, когда ты становишься сильнее.</p>` : "";
-  const hist = l.length ? `<div class="hist">${l.slice().reverse().map(e=>`<div class="hrow"><span class="dt">${keyToDate(e.d).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}</span><b class="num">${esc(valText(ex,e))}</b><button class="del" type="button" data-hdel="${e.d}" aria-label="Удалить запись">×</button></div>`).join("")}</div>`
+  const hint = byMax && l.length ? `<p class="hint">График и прогресс — расчётный максимум на 1 раз, чтобы честно сравнивать рекорды с разным числом повторов.</p>` : (ex.t==="g"||ex.t==="a") && l.length ? `<p class="hint">Ноль на графике — свой вес. Ниже нуля — с противовесом, выше — с дополнительным весом. Линия идёт вверх, когда ты становишься сильнее.</p>` : "";
+  const hist = l.length ? `<div class="hist">${l.slice().reverse().map(e=>`<div class="hrow"><span class="dt">${keyToDate(e.d).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}</span><b class="num">${esc(valText(ex,e))}</b><button class="del" type="button" data-hdel="${l.indexOf(e)}" aria-label="Удалить запись">×</button></div>`).join("")}</div>`
     : `<p class="hint">${view==="pr"?"Рекордов пока нет. Когда возьмёшь новый максимум, нажми «Рекорд» в карточке упражнения.":"Записей пока нет. Нажми «Записать» после тренировки."}</p>`;
-  openModal(ex.n, `${seg}${kp}<div class="chart">${lineChart(pts, cssv(view==="pr"?"--fat":"--prot"), loadUnit(ex))}</div>${hint}<h3 class="cat-h">${view==="pr"?"Все рекорды":"История"}</h3>${hist}`, [{label:"Закрыть"}]);
+  openModal(ex.n, `${seg}${kp}<div class="chart">${lineChart(pts, cssv(view==="pr"?"--fat":"--prot"), loadUnit(ex), "rec")}</div>${hint}<h3 class="cat-h">${view==="pr"?"Все рекорды":"История"}</h3>${hist}`, [{label:"Закрыть"}]);
   const mb=document.getElementById("mBody");
   mb.querySelectorAll("#exView button").forEach(b=>b.addEventListener("click",()=>openExStats(id,b.dataset.v)));
-  mb.querySelectorAll("[data-hdel]").forEach(b=>b.addEventListener("click",()=>{ const st=view==="pr"?train.pr:train.log; st[id]=(st[id]||[]).filter(e=>e.d!==b.dataset.hdel); saveTrain(); renderTrain(); openExStats(id,view); }));
+  // удаляем ровно одну запись (в один день может быть несколько рекордов с разным числом повторов), с подтверждением
+  mb.querySelectorAll("[data-hdel]").forEach(b=>b.addEventListener("click",()=>{ const st=view==="pr"?train.pr:train.log, i=+b.dataset.hdel, e=(st[id]||[])[i]; if(!e) return;
+    openModal(view==="pr"?"Удалить рекорд?":"Удалить запись?",`<p>${esc(keyToDate(e.d).toLocaleDateString("ru-RU",{day:"numeric",month:"long"}))}: ${esc(valText(ex,e))}.</p>`,[{label:"Отмена",fn:()=>openExStats(id,view)},{label:"Удалить",cls:"danger",fn:()=>{ st[id].splice(i,1); saveTrain(); renderTrain(); openExStats(id,view); }}]); }));
 }
 function daysPicker(sel){ return `<div class="wkdays">${WD.map((d,i)=>`<label><input type="checkbox" name="wkd" value="${i}" ${sel.includes(i)?"checked":""}><span>${d}</span></label>`).join("")}</div>`; }
 function pickedDays(){ return [...document.querySelectorAll('#mBody input[name="wkd"]:checked')].map(i=>+i.value); }
@@ -3022,7 +3094,7 @@ function renderProgress(){
     let hint="";
     if(pcMetric==="waist"&&pts.length>=2) hint = d<0 ? `Талия уменьшилась на ${fmt1(-d)} см — жир уходит.` : d>0 ? `Талия выросла на ${fmt1(d)} см. Если цель — рекомпозиция или похудение, проверь калории.` : "Талия держится на месте.";
     else if(pcMetric==="w"&&pts.length>=2){ const days=(keyToDate(pts[pts.length-1].k)-keyToDate(pts[0].k))/864e5; const wk=days>0?d/days*7:0;
-      hint = `Темп: ${wk>0?"+":wk<0?"−":""}${fmt1(Math.abs(wk))} кг в неделю. Широкая полупрозрачная линия — среднее за неделю, на неё смотри больше, чем на отдельные дни.`; }
+      hint = `Темп: ${wk>0?"+":wk<0?"−":""}${fmt1(Math.abs(wk))} кг в неделю.`+(pts.length>=6?" Широкая полупрозрачная линия — среднее по соседним замерам, на неё смотри больше, чем на отдельные дни.":""); }
     document.getElementById("pcHint").textContent=hint;
   }
   const keys=bodyKeys().reverse();
@@ -3031,7 +3103,8 @@ function renderProgress(){
 }
 document.getElementById("bmDate").addEventListener("change",renderProgress);
 document.getElementById("bmSave").addEventListener("click",()=>{
-  const k=document.getElementById("bmDate").value||todayKey, w=parseFloat(document.getElementById("bmW").value), wa=parseFloat(document.getElementById("bmWaist").value);
+  let k=document.getElementById("bmDate").value||todayKey; if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||k>todayKey){ k=todayKey; document.getElementById("bmDate").value=k; } // замер из будущего не принимаем
+  const w=parseFloat(document.getElementById("bmW").value), wa=parseFloat(document.getElementById("bmWaist").value);
   if(!(w>0)&&!(wa>0)) return;
   const bmBad = w>0 && (w<25||w>350) ? "Проверь вес: в приложении можно записать от 25 до 350 кг." : wa>0 && (wa<40||wa>250) ? "Проверь обхват талии: можно записать от 40 до 250 см." : "";
   if(bmBad){ openModal("Похоже на опечатку",`<p>${bmBad}</p>`,[{label:"Понятно"}]); return; }
@@ -3059,10 +3132,10 @@ function renderStats(){
   const pDays=logged.filter(r=>r.t.p>=n.p*.9).length;
   const ak=avg("k"), ap=avg("p"), dk=ak-n.k;
   document.getElementById("stTiles").innerHTML = !logged.length ? `<div class="chartempty" style="grid-column:1/-1">За этот период записей нет</div>` : !n0 ? `
-    <div class="tile"><span class="label">Ккал в среднем</span><b class="num">${r(ak)}</b><span class="s">норма не рассчитана</span></div>
+    <div class="tile"><span class="label">Ккал в среднем</span><b class="num">${nf(ak)}</b><span class="s">норма не рассчитана</span></div>
     <div class="tile"><span class="label">Белок в среднем</span><b class="num">${r(ap)}<small>г</small></b><span class="s">дней записано ${withData.length} из ${stRange}</span></div>
     <p class="hint" style="grid-column:1/-1">Заполни свои данные, чтобы видеть, сколько дней ты укладывался в норму.</p>` : `
-    <div class="tile"><span class="label">Ккал в среднем</span><b class="num">${r(ak)}</b><span class="s ${Math.abs(dk)<=n.k*.1?"good":dk>0?"bad":""}">${Math.abs(dk)<=n.k*.1?"в норме":dk>0?"+"+r(dk)+" к цели":"−"+r(-dk)+" от цели"}</span></div>
+    <div class="tile"><span class="label">Ккал в среднем</span><b class="num">${nf(ak)}</b><span class="s ${Math.abs(dk)<=n.k*.1?"good":dk>0?"bad":""}">${Math.abs(dk)<=n.k*.1?"в норме":dk>0?"+"+nf(dk)+" к цели":"−"+nf(-dk)+" от цели"}</span></div>
     <div class="tile"><span class="label">Белок в среднем</span><b class="num">${r(ap)}<small>г</small></b><span class="s ${ap>=n.p*.9?"good":""}">цель ${n.p} г</span></div>
     <div class="tile"><span class="label">Дней в норме</span><b class="num">${inNorm}<small>из ${logged.length}</small></b><span class="s">калории ±10% и белок${logged.length<withData.length?", без сегодня":""}</span></div>
     <div class="tile"><span class="label">Белок набран</span><b class="num">${pDays}<small>из ${logged.length}</small></b><span class="s">дней записано ${withData.length} из ${stRange}</span></div>`;
@@ -3072,10 +3145,12 @@ function renderStats(){
   const pp=pk/tot*100, fp=fk/tot*100, cp=ck/tot*100;
   document.getElementById("stSplit").innerHTML = logged.length ? `<i style="width:${pp}%;background:var(--prot)"></i><i style="width:${fp}%;background:var(--fat)"></i><i style="width:${cp}%;background:var(--carb)"></i>` : "";
   document.getElementById("stSplitLeg").innerHTML = logged.length ? `<div><span><span class="dot" style="background:var(--prot)"></span>Белки</span><b class="num">${r(pp)}%</b></div><div><span><span class="dot" style="background:var(--fat)"></span>Жиры</span><b class="num">${r(fp)}%</b></div><div><span><span class="dot" style="background:var(--carb)"></span>Углеводы</span><b class="num">${r(cp)}%</b></div>` : "";
-  document.getElementById("stSplitHint").textContent = !logged.length ? "" : fp>40 ? "Больше 40% калорий из жиров. Для твоей цели лучше держать 25–35%." : pp<20 ? "Белка меньше 20% калорий. Добавь мясо, птицу, творог или протеин." : "Хороший баланс: белка достаточно, жиры в норме.";
+  const pShort = n0 && ap < n.p*.9;
+  document.getElementById("stSplit").hidden=!logged.length;
+  document.getElementById("stSplitHint").textContent = !logged.length ? "" : pShort ? `Белка в среднем ${r(ap)} г из ${n.p} г — добавь мясо, птицу, рыбу, творог или протеин.` : fp>40 ? "Больше 40% калорий из жиров. Для твоей цели лучше держать 25–35%." : pp<20 ? "Белка меньше 20% калорий. Добавь мясо, птицу, творог или протеин." : (n0?"Хороший баланс: белка достаточно, жиры в норме.":"Жиры в норме, белка не меньше 20% калорий.");
   const cntMap=Object.create(null); logged.forEach(r=>(days[r.k].items||[]).forEach(i=>{ const m=cntMap[i.n]||(cntMap[i.n]={n:i.n,c:0,k:0}); m.c++; m.k+=i.k; }));
   const top=Object.values(cntMap).sort((a,b)=>b.c-a.c||b.k-a.k).slice(0,5);
-  document.getElementById("stTop").innerHTML = top.length ? top.map(t=>`<div class="toprow"><span>${esc(t.n)}</span><small class="num">${t.c} ${plural(t.c,"раз","раза","раз")} · ${r(t.k)} ккал</small></div>`).join("") : `<p class="empty">Пока пусто</p>`;
+  document.getElementById("stTop").innerHTML = top.length ? top.map(t=>`<div class="toprow"><span>${esc(t.n)}</span><small class="num">${t.c} ${plural(t.c,"раз","раза","раз")} · ${nf(t.k)} ккал</small></div>`).join("") : `<p class="empty">Пока пусто</p>`;
 }
 segBind("stRange",b=>{ stRange=+b.dataset.r; renderStats(); });
 
@@ -3141,7 +3216,7 @@ window.Sync=(function(){
     const log={}, pr={};
     new Set([...Object.keys(R.log||{}),...Object.keys(L.log||{})]).forEach(id=>log[id]=ml(R.log[id],L.log[id],e=>e.d));
     new Set([...Object.keys(R.pr||{}),...Object.keys(L.pr||{})]).forEach(id=>pr[id]=ml(R.pr[id],L.pr[id],e=>e.d+"|"+e.r));
-    return Object.assign({},R,{ex,log,pr});
+    return Object.assign({},R,{ex,log,pr,ord:Object.assign({},L.ord||{},R.ord||{})});
   }
   function firstMerge(k,rv){
     let v;
